@@ -1,8 +1,8 @@
-# Cancellation Flow Screens
+# Complete Cancellation Flow Screens
 
-This folder contains the individual screen components for the subscription cancellation flow, making the code more maintainable and easier to edit.
+This folder contains all the individual screen components for the subscription cancellation flow, making the code more maintainable and easier to edit.
 
-## Structure
+## Complete Structure
 
 ```
 screens/
@@ -11,16 +11,26 @@ screens/
 ├── job-found/            # Screens for users who found jobs
 │   ├── index.ts          # Export job-found screens
 │   ├── InitialQuestionScreen.tsx    # Step 1: Initial job status question
-│   └── CongratsScreen.tsx           # Step 2A: Survey for users who found jobs
-├── downsell/             # Screens for downsell offer flow
-│   ├── index.ts          # Export downsell screens
-│   └── DownsellScreen.tsx           # Step 2B: A/B testing offer for users still looking
-└── README.md             # This documentation
+│   ├── CongratsScreen.tsx           # Step 2A: Survey for users who found jobs
+│   ├── YesWithMMScreen.tsx          # Step 3A: For users who found jobs WITH MigrateMate
+│   ├── NoHelpWithVisaScreen.tsx     # Step 4A: Users who don't need visa help
+│   ├── FeedbackScreen.tsx            # Step 3B: Collect additional feedback
+│   ├── NoWithoutMMScreen.tsx        # Step 4B: For users who found jobs WITHOUT MigrateMate
+│   └── VisaHelp.tsx                 # Step 5: Users who need visa assistance
+└── downsell/             # Screens for downsell offer flow
+    ├── index.ts          # Export downsell screens
+    ├── DownsellScreen.tsx           # Step 2B: A/B testing offer for users still looking
+    ├── OfferAccept1.tsx             # Step 3C: Confirmation of discount acceptance
+    ├── OfferDeclined.tsx            # Step 3D: Survey for users who declined discount
+    ├── CancelReason.tsx             # Step 4: Collect cancellation reason and details
+    └── cancelComplete.tsx           # Step 5: Final cancellation confirmation
 ```
 
-## Components
+## Screen Components
 
-### InitialQuestionScreen
+### Job Found Path Screens
+
+#### InitialQuestionScreen
 - **Purpose**: First step of the cancellation flow
 - **Props**: `onJobFoundAnswer: (answer: 'yes' | 'no') => void`
 - **Features**: 
@@ -29,7 +39,7 @@ screens/
   - Two action buttons with proper radio button semantics
   - Uses the exact design styling from the provided mockup
 
-### CongratsScreen
+#### CongratsScreen
 - **Purpose**: Survey form for users who found jobs
 - **Props**: 
   - `surveyAnswers: SurveyAnswers`
@@ -42,16 +52,110 @@ screens/
   - Continue button (disabled until form is complete)
   - Consistent button styling with the main app theme
 
-### DownsellScreen
+#### YesWithMMScreen
+- **Purpose**: For users who found jobs WITH MigrateMate
+- **Props**:
+  - `onCompleteCancellation: () => void`
+  - `onNavigateToNoHelpWithVisa: () => void`
+  - `onNavigateToVisaHelp: () => void`
+- **Features**:
+  - Options to complete cancellation or get additional help
+  - Navigation to visa-related assistance screens
+
+#### NoHelpWithVisaScreen
+- **Purpose**: For users who don't need visa help
+- **Props**:
+  - `onFinish: () => void`
+- **Features**:
+  - Simple confirmation screen
+  - Finish button to close the flow
+
+#### FeedbackScreen
+- **Purpose**: Collect additional feedback from users
+- **Props**:
+  - `onContinue: (feedback: string) => void`
+- **Features**:
+  - Text area for user feedback
+  - Continue button to proceed to next screen
+
+#### NoWithoutMMScreen
+- **Purpose**: For users who found jobs WITHOUT MigrateMate
+- **Props**:
+  - `onCompleteCancellation: () => void`
+  - `onNavigateToNoHelpWithVisa: () => void`
+  - `onNavigateToVisaHelp: () => void`
+- **Features**:
+  - Options to complete cancellation or get additional help
+  - Navigation to visa-related assistance screens
+
+#### VisaHelp
+- **Purpose**: For users who need visa assistance
+- **Props**:
+  - `onFinish: () => void`
+- **Features**:
+  - Information about visa assistance
+  - Finish button to close the flow
+
+### Downsell Path Screens
+
+#### DownsellScreen
 - **Purpose**: A/B testing offer for users still looking for jobs
 - **Props**:
-  - `downsellVariant: 'A' | 'B'`
-  - `onDownsellResponse: (accepted: boolean) => void`
+  - `variant: DownsellVariant`
+  - `onNavigateToOfferAccept1: () => void`
+  - `onNavigateToOfferDeclined: () => void`
 - **Features**:
   - Different pricing based on A/B testing variant
-  - Variant A: 50% off ($12.50/month)
-  - Variant B: $10 off ($15/month)
+  - Variant A: 50% off ($19.50/month instead of $39/month)
+  - Variant B: 50% off ($12.50/month instead of $25/month)
   - Accept/Reject buttons with proper styling
+
+#### OfferAccept1
+- **Purpose**: Confirmation of discount acceptance
+- **Props**:
+  - `variant: DownsellVariant`
+  - `daysLeft?: number`
+  - `nextBillingDate?: string`
+  - `onComplete: () => void`
+- **Features**:
+  - Success message: "Great choice, mate!"
+  - Shows remaining days on current plan
+  - Displays new discounted price
+  - "Land your dream role" button to complete
+
+#### OfferDeclined
+- **Purpose**: Survey for users who declined the discount
+- **Props**:
+  - `variant: DownsellVariant`
+  - `onGetDiscount: () => void`
+  - `onNavigateToCancelReason: () => void`
+- **Features**:
+  - Survey questions about job search activity
+  - Option to reconsider and get discount
+  - Continue button to proceed to cancellation reason
+
+#### CancelReason
+- **Purpose**: Collect cancellation reason and details
+- **Props**:
+  - `variant: DownsellVariant`
+  - `onGetDiscount: (reason: string, details?: string) => void`
+  - `onCompleteCancellation: (reason: string, details?: string) => void`
+- **Features**:
+  - Multiple reason options with radio buttons
+  - Conditional follow-up questions based on selection
+  - Form validation for required fields
+  - Options to get discount or complete cancellation
+
+#### CancelComplete
+- **Purpose**: Final confirmation of cancellation
+- **Props**:
+  - `endDate?: string`
+  - `onBackToJobs: () => void`
+- **Features**:
+  - Farewell message: "Sorry to see you go, mate"
+  - Subscription end date information
+  - Access details until end date
+  - "Back to Jobs" button to close flow
 
 ## Types
 
@@ -67,7 +171,19 @@ interface SurveyAnswers {
 
 ### FlowStep
 ```typescript
-type FlowStep = 'initial' | 'congrats' | 'downsell';
+type FlowStep = 
+  | 'initial' 
+  | 'congrats' 
+  | 'yesWithMM' 
+  | 'noHelpWithVisa' 
+  | 'feedback' 
+  | 'noWithoutMM' 
+  | 'visaHelp' 
+  | 'downsell' 
+  | 'offerAccept1' 
+  | 'offerDeclined' 
+  | 'cancelReason' 
+  | 'cancelComplete';
 ```
 
 ### DownsellVariant
@@ -90,11 +206,18 @@ type DownsellVariant = 'A' | 'B';
 ### Job Found Flow (`job-found/`)
 - **InitialQuestionScreen**: First step asking if user found a job
 - **CongratsScreen**: Survey form for users who found jobs
-- These screens handle the "success path" where users have found employment
+- **YesWithMMScreen**: For users who found jobs WITH MigrateMate
+- **NoHelpWithVisaScreen**: Users who don't need visa help
+- **FeedbackScreen**: Collect additional feedback
+- **NoWithoutMMScreen**: For users who found jobs WITHOUT MigrateMate
+- **VisaHelp**: Users who need visa assistance
 
 ### Downsell Flow (`downsell/`)
 - **DownsellScreen**: A/B testing offer for users still looking
-- This screen handles the "retention path" where users haven't found jobs yet
+- **OfferAccept1**: Confirmation of discount acceptance
+- **OfferDeclined**: Survey for users who declined discount
+- **CancelReason**: Collect cancellation reason and details
+- **CancelComplete**: Final cancellation confirmation
 
 ## Usage
 
@@ -102,7 +225,10 @@ type DownsellVariant = 'A' | 'B';
 import { 
   InitialQuestionScreen, 
   CongratsScreen, 
-  DownsellScreen 
+  DownsellScreen,
+  OfferAccept1,
+  CancelReason,
+  CancelComplete
 } from '@/components/screens';
 
 // Use in your main component
@@ -117,3 +243,5 @@ import {
 - Create screen-specific styling files
 - Add animation transitions between screens
 - Implement screen-specific analytics tracking
+- Add accessibility improvements
+- Create screen-specific error boundaries

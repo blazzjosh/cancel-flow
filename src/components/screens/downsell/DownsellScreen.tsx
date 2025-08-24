@@ -1,56 +1,77 @@
 'use client';
 
-import { DownsellVariant } from '../types';
-
-interface DownsellScreenProps {
-    downsellVariant: DownsellVariant;
-    onDownsellResponse: (accepted: boolean) => void;
+interface DownsellOfferScreenProps {
+    variant: 'A' | 'B';
+    onNavigateToOfferAccept1: () => void;
+    onNavigateToOfferDeclined: () => void;
 }
 
-export default function DownsellScreen({ downsellVariant, onDownsellResponse }: DownsellScreenProps) {
+export default function DownsellOfferScreen({ variant, onNavigateToOfferAccept1, onNavigateToOfferDeclined }: DownsellOfferScreenProps) {
+    // Pricing based on variant
+    const pricing = variant === 'B'
+        ? { discounted: '$12.50', original: '$25' }
+        : { discounted: '$19.50', original: '$39' }; // Variant A pricing (if different)
+
     return (
-        <div className="space-y-6">
-            <div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                    We built this to help you land the job, this makes it a little easier.
+        <div className="flex flex-col w-full p-5">
+            {/* Main heading */}
+            <div className="mb-6">
+                <h2 className="text-[40px] font-semibold leading-[48px] tracking-[-1.08px] text-gray-800 font-dm-sans">
+                    We built this to help you land the
+                    <br />
+                    job, this makes it a little easier.
                 </h2>
-                <p className="text-gray-600 text-lg">
+            </div>
+
+            {/* Subtitle */}
+            <div className="mb-8">
+                <p className="text-base font-medium leading-[24px] text-gray-700 font-dm-sans">
                     We&apos;ve been there and we&apos;re here to help you.
                 </p>
             </div>
 
-            <div className="bg-gradient-to-r from-purple-50 to-indigo-50 p-6 rounded-lg border border-purple-200">
-                <h3 className="text-lg font-bold text-gray-900 mb-3">
-                    Here&apos;s {downsellVariant === 'A' ? '50% off' : '$10 off'} until you find a job.
-                </h3>
+            {/* Offer card */}
+            <div className="mb-6 p-6 bg-purple-50 border-2 border-purple-200 rounded-xl">
+                {/* Offer heading */}
+                <div className="text-center mb-4">
+                    <h3 className="text-2xl font-semibold text-gray-800 font-dm-sans mb-2">
+                        Here&apos;s 50% off until you find a job.
+                    </h3>
 
-                <div className="flex items-center space-x-3 mb-4">
-                    <span className="text-2xl font-bold text-green-600">
-                        ${downsellVariant === 'A' ? '12.50' : '15'}/month
-                    </span>
-                    <span className="text-gray-500 line-through">
-                        ${downsellVariant === 'A' ? '25' : '25'}/month
-                    </span>
+                    {/* Pricing */}
+                    <div className="flex items-center justify-center gap-3 mb-4">
+                        <span className="text-3xl font-bold text-purple-600 font-dm-sans">
+                            {pricing.discounted}<span className="text-lg font-medium">/month</span>
+                        </span>
+                        <span className="text-xl text-gray-500 line-through font-dm-sans">
+                            {pricing.original}<span className="text-sm">/month</span>
+                        </span>
+                    </div>
                 </div>
 
+                {/* Accept button */}
                 <button
-                    onClick={() => onDownsellResponse(true)}
-                    className="w-full bg-green-600 text-white px-4 py-3 rounded-lg font-medium hover:bg-green-700 transition-colors mb-3"
+                    onClick={onNavigateToOfferAccept1}
+                    className="w-full h-[52px] px-6 py-3 rounded-lg bg-green-600 text-white font-semibold text-base hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all duration-200 font-dm-sans mb-3"
                 >
-                    Get {downsellVariant === 'A' ? '50% off' : '$10 off'}
+                    Get 50% off
                 </button>
 
-                <p className="text-sm text-gray-500 text-center">
+                {/* Fine print */}
+                <p className="text-sm text-gray-600 text-center font-dm-sans italic">
                     You won&apos;t be charged until your next billing date.
                 </p>
             </div>
 
-            <button
-                onClick={() => onDownsellResponse(false)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors font-medium shadow-sm"
-            >
-                No thanks
-            </button>
+            {/* Decline button */}
+            <div className="mt-auto">
+                <button
+                    onClick={onNavigateToOfferDeclined}
+                    className="w-full h-[52px] px-6 py-3 rounded-lg border-2 border-gray-300 bg-white text-gray-700 font-semibold text-base hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-all duration-200 font-dm-sans"
+                >
+                    No thanks
+                </button>
+            </div>
         </div>
     );
 }

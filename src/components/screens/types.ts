@@ -6,5 +6,5 @@ export interface SurveyAnswers {
 }
 
 export type DownsellVariant = 'A' | 'B';
-export type FlowStep = 'initial' | 'congrats' | 'yesWithMM' | 'noHelpWithVisa' | 'feedback' | 'noWithoutMM' | 'visaHelp' | 'downsell';
+export type FlowStep = 'initial' | 'congrats' | 'yesWithMM' | 'noHelpWithVisa' | 'feedback' | 'noWithoutMM' | 'visaHelp' | 'offerAccept1' | 'offerDeclined' | 'cancelReason' | 'cancelComplete' | 'downsell';
 export type JobFoundAnswer = 'yes' | 'no' | null;

@@ -15,7 +15,11 @@ import {
   NoHelpWithVisaScreen,
   FeedbackScreen,
   NoWithoutMMScreen,
-  VisaHelp
+  VisaHelp,
+  OfferAccept1,
+  CancelReason,
+  CancelComplete,
+  OfferDeclined
 } from './screens';
 
 interface CancellationFlowProps {
@@ -95,24 +99,6 @@ export default function CancellationFlow({ isOpen, onClose, subscriptionId, user
       } catch (error) {
         console.error('Error saving survey answers:', error);
       }
-    }
-  };
-
-  const handleDownsellResponse = async (accepted: boolean) => {
-    try {
-      if (accepted) {
-        // Update cancellation record to show downsell was accepted
-        await supabase
-          .from('cancellations')
-          .update({ accepted_downsell: true })
-          .eq('user_id', userId)
-          .eq('subscription_id', subscriptionId);
-      }
-
-      // Close the flow
-      onClose();
-    } catch (error) {
-      console.error('Error handling downsell response:', error);
     }
   };
 
@@ -227,9 +213,89 @@ export default function CancellationFlow({ isOpen, onClose, subscriptionId, user
     } else if (currentStep === 'visaHelp') {
       // Go back to congrats since visaHelp can come from multiple screens
       setCurrentStep('congrats');
+    } else if (currentStep === 'offerAccept1') {
+      setCurrentStep('downsell');
+    } else if (currentStep === 'offerDeclined') {
+      setCurrentStep('downsell');
+    } else if (currentStep === 'cancelReason') {
+      setCurrentStep('offerDeclined');
+    } else if (currentStep === 'cancelComplete') {
+      setCurrentStep('cancelReason');
     } else if (currentStep === 'downsell') {
       setCurrentStep('initial');
     }
+  };
+
+  const handleNavigateToOfferAccept1 = () => {
+    setCurrentStep('offerAccept1');
+  };
+
+  const handleNavigateToOfferDeclined = () => {
+    setCurrentStep('offerDeclined');
+  };
+
+  const handleOfferDeclinedGetDiscount = async () => {
+    try {
+      // Navigate to offer accept screen
+      setCurrentStep('offerAccept1');
+    } catch (error) {
+      console.error('Error handling discount request:', error);
+    }
+  };
+
+
+
+  const handleOfferAccept1Complete = () => {
+    handleVisaHelpComplete();
+  };
+
+  const handleNavigateToCancelReason = () => {
+    setCurrentStep('cancelReason');
+  };
+
+  const handleCancelReasonGetDiscount = async (reason: string, details?: string) => {
+    try {
+      // Update cancellation record with reason and details
+      await supabase
+        .from('cancellations')
+        .update({
+          cancellation_reason: reason,
+          cancellation_details: details,
+          accepted_downsell: true
+        })
+        .eq('user_id', userId)
+        .eq('subscription_id', subscriptionId);
+
+      // Navigate to offer accept screen
+      setCurrentStep('offerAccept1');
+    } catch (error) {
+      console.error('Error handling discount request:', error);
+    }
+  };
+
+  const handleCancelReasonComplete = async (reason: string, details?: string) => {
+    try {
+      // Update cancellation record with reason and details
+      await supabase
+        .from('cancellations')
+        .update({
+          cancellation_reason: reason,
+          cancellation_details: details,
+          completed: true
+        })
+        .eq('user_id', userId)
+        .eq('subscription_id', subscriptionId);
+
+      // Navigate to cancelComplete screen
+      setCurrentStep('cancelComplete');
+    } catch (error) {
+      console.error('Error completing cancellation:', error);
+    }
+  };
+
+  const handleCancelCompleteBackToJobs = () => {
+    // Close the flow when user clicks "Back to Jobs"
+    onClose();
   };
 
   if (!isOpen) return null;
@@ -269,10 +335,10 @@ export default function CancellationFlow({ isOpen, onClose, subscriptionId, user
               <div className="flex space-x-1">
                 <div className={`w-2 h-2 rounded-full ${currentStep === 'congrats' ? 'bg-gray-400' : 'bg-gray-300'}`}></div>
                 <div className={`w-2 h-2 rounded-full ${currentStep === 'yesWithMM' || currentStep === 'downsell' || currentStep === 'feedback' ? 'bg-gray-400' : 'bg-gray-300'}`}></div>
-                <div className={`w-2 h-2 rounded-full ${currentStep === 'noHelpWithVisa' || currentStep === 'noWithoutMM' || currentStep === 'visaHelp' ? 'bg-gray-400' : 'bg-gray-300'}`}></div>
+                <div className={`w-2 h-2 rounded-full ${currentStep === 'noHelpWithVisa' || currentStep === 'noWithoutMM' || currentStep === 'visaHelp' || currentStep === 'offerAccept1' || currentStep === 'offerDeclined' || currentStep === 'cancelReason' || currentStep === 'cancelComplete' ? 'bg-gray-400' : 'bg-gray-300'}`}></div>
               </div>
               <span className="text-sm text-gray-500 font-dm-sans">
-                Step {currentStep === 'congrats' ? '1' : currentStep === 'yesWithMM' || currentStep === 'downsell' || currentStep === 'feedback' ? '2' : currentStep === 'noHelpWithVisa' || currentStep === 'noWithoutMM' || currentStep === 'visaHelp' ? '3' : '3'} of 3
+                Step {currentStep === 'congrats' ? '1' : currentStep === 'yesWithMM' || currentStep === 'downsell' || currentStep === 'feedback' ? '2' : currentStep === 'noHelpWithVisa' || currentStep === 'noWithoutMM' || currentStep === 'visaHelp' || currentStep === 'offerAccept1' || currentStep === 'offerDeclined' || currentStep === 'cancelReason' ? '3' : currentStep === 'cancelComplete' ? '4' : '3'} of {currentStep === 'cancelComplete' ? '4' : '3'}
               </span>
             </div>
           )}
@@ -334,8 +400,39 @@ export default function CancellationFlow({ isOpen, onClose, subscriptionId, user
 
             {currentStep === 'downsell' && (
               <DownsellScreen
-                downsellVariant={downsellVariant}
-                onDownsellResponse={handleDownsellResponse}
+                variant={downsellVariant}
+                onNavigateToOfferAccept1={handleNavigateToOfferAccept1}
+                onNavigateToOfferDeclined={handleNavigateToOfferDeclined}
+              />
+            )}
+
+            {currentStep === 'offerAccept1' && (
+              <OfferAccept1
+                variant={downsellVariant}
+                onComplete={handleOfferAccept1Complete}
+              />
+            )}
+
+            {currentStep === 'offerDeclined' && (
+              <OfferDeclined
+                variant={downsellVariant}
+                onGetDiscount={handleOfferDeclinedGetDiscount}
+                onNavigateToCancelReason={handleNavigateToCancelReason}
+              />
+            )}
+
+            {currentStep === 'cancelReason' && (
+              <CancelReason
+                variant={downsellVariant}
+                onGetDiscount={handleCancelReasonGetDiscount}
+                onCompleteCancellation={handleCancelReasonComplete}
+              />
+            )}
+
+            {currentStep === 'cancelComplete' && (
+              <CancelComplete
+                endDate="December 31, 2024"
+                onBackToJobs={handleCancelCompleteBackToJobs}
               />
             )}
           </div>

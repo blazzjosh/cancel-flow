@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import CancellationFlow from '@/components/CancellationFlow';
 
 // Mock user data for UI display
 const mockUser = {
@@ -13,7 +14,7 @@ const mockSubscriptionData = {
   status: 'active',
   isTrialSubscription: false,
   cancelAtPeriodEnd: false,
-  currentPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 days from now
+  currentPeriodEnd: '2024-02-15T00:00:00.000Z', // Fixed date to avoid hydration issues
   monthlyPrice: 25,
   isUCStudent: false,
   hasManagedAccess: false,
@@ -24,9 +25,12 @@ const mockSubscriptionData = {
 export default function ProfilePage() {
   const [loading] = useState(false);
   const [isSigningOut, setIsSigningOut] = useState(false);
-  
+
   // New state for settings toggle
   const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
+
+  // State for cancellation flow
+  const [showCancellationFlow, setShowCancellationFlow] = useState(false);
 
   const handleSignOut = async () => {
     setIsSigningOut(true);
@@ -56,7 +60,7 @@ export default function ProfilePage() {
                 </div>
               </div>
             </div>
-            
+
             {/* Profile Info skeleton */}
             <div className="px-6 py-6 border-b border-gray-200">
               <div className="h-6 w-56 bg-gradient-to-r from-gray-200 to-gray-300 rounded mb-4 animate-pulse"></div>
@@ -75,13 +79,13 @@ export default function ProfilePage() {
                 </div>
               </div>
             </div>
-            
+
             {/* Support skeleton */}
             <div className="px-6 py-6 border-b border-gray-200">
               <div className="h-6 w-24 bg-gradient-to-r from-gray-200 to-gray-300 rounded mb-4 animate-pulse"></div>
               <div className="h-12 w-full bg-gradient-to-r from-gray-200 to-gray-300 rounded-lg animate-pulse"></div>
             </div>
-            
+
             {/* Subscription Management skeleton */}
             <div className="px-6 py-6">
               <div className="h-6 w-56 bg-gradient-to-r from-gray-200 to-gray-300 rounded mb-4 animate-pulse"></div>
@@ -93,6 +97,14 @@ export default function ProfilePage() {
             </div>
           </div>
         </div>
+
+        {/* Cancellation Flow Modal */}
+        <CancellationFlow
+          isOpen={showCancellationFlow}
+          onClose={() => setShowCancellationFlow(false)}
+          subscriptionId="mock-subscription-id"
+          userId={mockUser.id}
+        />
       </div>
     );
   }
@@ -130,7 +142,7 @@ export default function ProfilePage() {
               </div>
             </div>
           </div>
-          
+
           {/* Profile Info */}
           <div className="px-6 py-6 border-b border-gray-200">
             <h2 className="text-lg font-medium text-gray-900 mb-4">Account Information</h2>
@@ -179,7 +191,7 @@ export default function ProfilePage() {
               </div>
             </div>
           </div>
-          
+
           {/* Support Button */}
           <div className="px-6 py-6 border-b border-gray-200">
             <button
@@ -210,10 +222,10 @@ export default function ProfilePage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
               <span className="text-sm font-medium">Manage Subscription</span>
-              <svg 
+              <svg
                 className={`w-4 h-4 ml-2 transition-transform duration-200 ${showAdvancedSettings ? 'rotate-180' : ''}`}
-                fill="none" 
-                viewBox="0 0 24 24" 
+                fill="none"
+                viewBox="0 0 24 24"
                 stroke="currentColor"
               >
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -248,9 +260,7 @@ export default function ProfilePage() {
                       <span className="text-sm font-medium">View billing history</span>
                     </button>
                     <button
-                      onClick={() => {
-                        console.log('Cancel button clicked - no action');
-                      }}
+                      onClick={() => setShowCancellationFlow(true)}
                       className="inline-flex items-center justify-center w-full px-4 py-3 bg-white border border-red-200 text-red-600 rounded-lg hover:bg-red-50 hover:border-red-300 transition-all duration-200 shadow-sm group"
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -265,6 +275,14 @@ export default function ProfilePage() {
           </div>
         </div>
       </div>
+
+      {/* Cancellation Flow Modal */}
+      <CancellationFlow
+        isOpen={showCancellationFlow}
+        onClose={() => setShowCancellationFlow(false)}
+        subscriptionId="mock-subscription-id"
+        userId={mockUser.id}
+      />
     </div>
   );
 }

@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 600" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <!-- Sky gradient from deep blue to purple/pink -->
+    <linearGradient id="sky" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#003366;stop-opacity:1" />
+      <stop offset="30%" style="stop-color:#1a4d80;stop-opacity:1" />
+      <stop offset="60%" style="stop-color:#663399;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#cc6699;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Building gradient -->
+    <linearGradient id="building" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#2c2c2c;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1a1a1a;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Empire State Building gradient -->
+    <linearGradient id="empireState" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffcc00;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#e6b800;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Window lights -->
+    <radialGradient id="windowLight" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#ffffcc;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ffffcc;stop-opacity:0" />
+    </radialGradient>
+  </defs>
+  
+  <!-- Sky background -->
+  <rect width="400" height="600" fill="url(#sky)"/>
+  
+  <!-- Distant buildings (silhouettes) -->
+  <rect x="50" y="350" width="60" height="200" fill="url(#building)" opacity="0.3"/>
+  <rect x="120" y="320" width="50" height="230" fill="url(#building)" opacity="0.4"/>
+  <rect x="180" y="340" width="70" height="210" fill="url(#building)" opacity="0.3"/>
+  <rect x="260" y="310" width="80" height="240" fill="url(#building)" opacity="0.4"/>
+  <rect x="350" y="330" width="40" height="220" fill="url(#building)" opacity="0.3"/>
+  
+  <!-- Empire State Building (main feature) -->
+  <rect x="150" y="200" width="100" height="350" fill="url(#empireState)"/>
+  
+  <!-- Empire State Building details -->
+  <rect x="160" y="210" width="80" height="20" fill="#2c2c2c"/>
+  <rect x="170" y="220" width="60" height="60" fill="#ffffff" opacity="0.9"/>
+  <rect x="175" y="225" width="50" height="50" fill="url(#windowLight)"/>
+  
+  <!-- Empire State Building windows -->
+  <rect x="165" y="290" width="70" height="8" fill="#ffffff" opacity="0.8"/>
+  <rect x="165" y="310" width="70" height="8" fill="#ffffff" opacity="0.8"/>
+  <rect x="165" y="330" width="70" height="8" fill="#ffffff" opacity="0.8"/>
+  <rect x="165" y="350" width="70" height="8" fill="#ffffff" opacity="0.8"/>
+  <rect x="165" y="370" width="70" height="8" fill="#ffffff" opacity="0.8"/>
+  <rect x="165" y="390" width="70" height="8" fill="#ffffff" opacity="0.8"/>
+  <rect x="165" y="410" width="70" height="8" fill="#ffffff" opacity="0.8"/>
+  <rect x="165" y="430" width="70" height="8" fill="#ffffff" opacity="0.8"/>
+  <rect x="165" y="450" width="70" height="8" fill="#ffffff" opacity="0.8"/>
+  <rect x="165" y="470" width="70" height="8" fill="#ffffff" opacity="0.8"/>
+  <rect x="165" y="490" width="70" height="8" fill="#ffffff" opacity="0.8"/>
+  <rect x="165" y="510" width="70" height="8" fill="#ffffff" opacity="0.8"/>
+  
+  <!-- Empire State Building antenna -->
+  <rect x="195" y="150" width="10" height="50" fill="#666666"/>
+  <rect x="197" y="140" width="6" height="10" fill="#cccccc"/>
+  
+  <!-- Taller building to the right -->
+  <rect x="270" y="180" width="80" height="370" fill="url(#building)"/>
+  <rect x="280" y="190" width="60" height="60" fill="#ffffff" opacity="0.9"/>
+  <rect x="285" y="195" width="50" height="50" fill="url(#windowLight)"/>
+  
+  <!-- Windows on taller building -->
+  <rect x="275" y="270" width="70" height="8" fill="#ffffff" opacity="0.7"/>
+  <rect x="275" y="290" width="70" height="8" fill="#ffffff" opacity="0.7"/>
+  <rect x="275" y="310" width="70" height="8" fill="#ffffff" opacity="0.7"/>
+  <rect x="275" y="330" width="70" height="8" fill="#ffffff" opacity="0.7"/>
+  <rect x="275" y="350" width="70" height="8" fill="#ffffff" opacity="0.7"/>
+  <rect x="275" y="370" width="70" height="8" fill="#ffffff" opacity="0.7"/>
+  <rect x="275" y="390" width="70" height="8" fill="#ffffff" opacity="0.7"/>
+  <rect x="275" y="410" width="70" height="8" fill="#ffffff" opacity="0.7"/>
+  <rect x="275" y="430" width="70" height="8" fill="#ffffff" opacity="0.7"/>
+  <rect x="275" y="450" width="70" height="8" fill="#ffffff" opacity="0.7"/>
+  <rect x="275" y="470" width="70" height="8" fill="#ffffff" opacity="0.7"/>
+  <rect x="275" y="490" width="70" height="8" fill="#ffffff" opacity="0.7"/>
+  <rect x="275" y="510" width="70" height="8" fill="#ffffff" opacity="0.7"/>
+  <rect x="275" y="530" width="70" height="8" fill="#ffffff" opacity="0.7"/>
+  
+  <!-- Bridge in distance (left side) -->
+  <rect x="20" y="520" width="80" height="8" fill="#cccccc" opacity="0.6"/>
+  <rect x="25" y="525" width="70" height="3" fill="#ffffff" opacity="0.8"/>
+  
+  <!-- Additional city lights -->
+  <circle cx="80" cy="480" r="2" fill="#ffffcc" opacity="0.8"/>
+  <circle cx="120" cy="460" r="1.5" fill="#ffffcc" opacity="0.7"/>
+  <circle cx="160" cy="440" r="1.5" fill="#ffffcc" opacity="0.7"/>
+  <circle cx="200" cy="420" r="1.5" fill="#ffffcc" opacity="0.7"/>
+  <circle cx="240" cy="400" r="1.5" fill="#ffffcc" opacity="0.7"/>
+  <circle cx="280" cy="380" r="1.5" fill="#ffffcc" opacity="0.7"/>
+  <circle cx="320" cy="360" r="1.5" fill="#ffffcc" opacity="0.7"/>
+  <circle cx="360" cy="340" r="1.5" fill="#ffffcc" opacity="0.7"/>
+  
+  <!-- Stars in sky -->
+  <circle cx="50" cy="100" r="1" fill="#ffffff" opacity="0.8"/>
+  <circle cx="120" cy="80" r="0.8" fill="#ffffff" opacity="0.7"/>
+  <circle cx="200" cy="120" r="1.2" fill="#ffffff" opacity="0.9"/>
+  <circle cx="280" cy="90" r="0.9" fill="#ffffff" opacity="0.8"/>
+  <circle cx="350" cy="110" r="1.1" fill="#ffffff" opacity="0.8"/>
+</svg>

@@ -5,7 +5,7 @@ import { SurveyAnswers } from '../types';
 interface CongratsScreenProps {
     surveyAnswers: SurveyAnswers;
     onSurveyAnswerChange: (question: keyof SurveyAnswers, value: string) => void;
-    onContinue: (foundJobWithMM: boolean) => void;
+    onContinue: (foundJobWithMM: boolean | 'feedback') => void;
     isFormValid: boolean;
 }
 
@@ -106,7 +106,15 @@ export default function CongratsScreen({
             </div>
 
             <button
-                onClick={() => onContinue(surveyAnswers.foundJobWithMigrateMate === 'Yes')}
+                onClick={() => {
+                    if (surveyAnswers.foundJobWithMigrateMate === 'No') {
+                        // If "No" is selected, go to feedback screen
+                        onContinue('feedback');
+                    } else {
+                        // If "Yes" is selected, continue with normal flow
+                        onContinue(surveyAnswers.foundJobWithMigrateMate === 'Yes');
+                    }
+                }}
                 disabled={!isFormValid}
                 className={`w-full px-4 py-3 rounded-lg font-medium transition-colors shadow-sm ${isFormValid
                     ? 'bg-[#8952fc] text-white hover:bg-[#7b40fc]'

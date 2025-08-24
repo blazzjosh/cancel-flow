@@ -1,3 +1,6 @@
-export { InitialQuestionScreen, CongratsScreen, YesWithMMScreen } from './job-found';
-export { DownsellScreen } from './downsell';
+// Job found screens
+export * from './job-found';
+
+// Downsell screens
+export * from './downsell';
 export * from './types';

@@ -11,7 +11,11 @@ import {
   DownsellVariant,
   FlowStep,
   JobFoundAnswer,
-  YesWithMMScreen
+  YesWithMMScreen,
+  NoHelpWithVisaScreen,
+  FeedbackScreen,
+  NoWithoutMMScreen,
+  VisaHelp
 } from './screens';
 
 interface CancellationFlowProps {
@@ -67,7 +71,7 @@ export default function CancellationFlow({ isOpen, onClose, subscriptionId, user
     }));
   };
 
-  const handleContinue = async (foundJobWithMM: boolean) => {
+  const handleContinue = async (foundJobWithMM: boolean | 'feedback') => {
     if (currentStep === 'congrats') {
       // Save survey answers first
       try {
@@ -80,8 +84,10 @@ export default function CancellationFlow({ isOpen, onClose, subscriptionId, user
             reason: JSON.stringify(surveyAnswers)
           });
 
-        // Navigate based on whether they found job with MigrateMate
-        if (foundJobWithMM) {
+        // Navigate based on the response
+        if (foundJobWithMM === 'feedback') {
+          setCurrentStep('feedback');
+        } else if (foundJobWithMM) {
           setCurrentStep('yesWithMM');
         } else {
           setCurrentStep('downsell');
@@ -129,10 +135,97 @@ export default function CancellationFlow({ isOpen, onClose, subscriptionId, user
     }
   };
 
+  const handleNavigateToNoHelpWithVisa = () => {
+    setCurrentStep('noHelpWithVisa');
+  };
+
+  const handleNoHelpWithVisaComplete = () => {
+    // For NoHelpWithVisa screen, we assume they need help (false for hasImmigrationLawyer)
+    handleCompleteCancellation(false);
+  };
+
+  const handleFeedbackComplete = async (feedback: string) => {
+    try {
+      // Update cancellation record with feedback
+      await supabase
+        .from('cancellations')
+        .update({
+          feedback: feedback
+        })
+        .eq('user_id', userId)
+        .eq('subscription_id', subscriptionId);
+
+      // Navigate to NoWithoutMM screen instead of completing
+      setCurrentStep('noWithoutMM');
+    } catch (error) {
+      console.error('Error saving feedback:', error);
+    }
+  };
+
+  const handleNoWithoutMMComplete = async (hasImmigrationLawyer: boolean) => {
+    try {
+      // Update cancellation record with immigration lawyer info
+      await supabase
+        .from('cancellations')
+        .update({
+          has_immigration_lawyer: hasImmigrationLawyer,
+          completed: true
+        })
+        .eq('user_id', userId)
+        .eq('subscription_id', subscriptionId);
+
+      // Close the flow
+      onClose();
+    } catch (error) {
+      console.error('Error completing cancellation:', error);
+    }
+  };
+
+  const handleNavigateToNoHelpWithVisaFromNoWithoutMM = () => {
+    setCurrentStep('noHelpWithVisa');
+  };
+
+  const handleNavigateToVisaHelpFromNoWithoutMM = () => {
+    setCurrentStep('visaHelp');
+  };
+
+  const handleNavigateToVisaHelpFromYesWithMM = () => {
+    setCurrentStep('visaHelp');
+  };
+
+  const handleVisaHelpComplete = async () => {
+    try {
+      // Update cancellation record to mark as completed
+      await supabase
+        .from('cancellations')
+        .update({
+          completed: true
+        })
+        .eq('user_id', userId)
+        .eq('subscription_id', subscriptionId);
+
+      // Close the flow
+      onClose();
+    } catch (error) {
+      console.error('Error completing cancellation:', error);
+    }
+  };
+
   const handleBack = () => {
     if (currentStep === 'congrats') {
       setCurrentStep('initial');
     } else if (currentStep === 'yesWithMM') {
+      setCurrentStep('congrats');
+    } else if (currentStep === 'noHelpWithVisa') {
+      // Go back to the previous step - could be either yesWithMM or noWithoutMM
+      // For now, we'll go back to congrats and let the user choose again
+      setCurrentStep('congrats');
+    } else if (currentStep === 'feedback') {
+      setCurrentStep('congrats');
+    } else if (currentStep === 'noWithoutMM') {
+      setCurrentStep('feedback');
+    } else if (currentStep === 'visaHelp') {
+      // Go back to congrats since visaHelp can come from multiple screens
       setCurrentStep('congrats');
     } else if (currentStep === 'downsell') {
       setCurrentStep('initial');
@@ -175,11 +268,11 @@ export default function CancellationFlow({ isOpen, onClose, subscriptionId, user
             <div className="absolute right-16 flex items-center space-x-2">
               <div className="flex space-x-1">
                 <div className={`w-2 h-2 rounded-full ${currentStep === 'congrats' ? 'bg-gray-400' : 'bg-gray-300'}`}></div>
-                <div className={`w-2 h-2 rounded-full ${currentStep === 'yesWithMM' || currentStep === 'downsell' ? 'bg-gray-400' : 'bg-gray-300'}`}></div>
-                <div className="w-2 h-2 rounded-full bg-gray-300"></div>
+                <div className={`w-2 h-2 rounded-full ${currentStep === 'yesWithMM' || currentStep === 'downsell' || currentStep === 'feedback' ? 'bg-gray-400' : 'bg-gray-300'}`}></div>
+                <div className={`w-2 h-2 rounded-full ${currentStep === 'noHelpWithVisa' || currentStep === 'noWithoutMM' || currentStep === 'visaHelp' ? 'bg-gray-400' : 'bg-gray-300'}`}></div>
               </div>
               <span className="text-sm text-gray-500 font-dm-sans">
-                Step {currentStep === 'congrats' ? '1' : currentStep === 'yesWithMM' || currentStep === 'downsell' ? '2' : '3'} of 3
+                Step {currentStep === 'congrats' ? '1' : currentStep === 'yesWithMM' || currentStep === 'downsell' || currentStep === 'feedback' ? '2' : currentStep === 'noHelpWithVisa' || currentStep === 'noWithoutMM' || currentStep === 'visaHelp' ? '3' : '3'} of 3
               </span>
             </div>
           )}
@@ -212,7 +305,31 @@ export default function CancellationFlow({ isOpen, onClose, subscriptionId, user
             )}
 
             {currentStep === 'yesWithMM' && (
-              <YesWithMMScreen onCompleteCancellation={handleCompleteCancellation} />
+              <YesWithMMScreen
+                onCompleteCancellation={handleCompleteCancellation}
+                onNavigateToNoHelpWithVisa={handleNavigateToNoHelpWithVisa}
+                onNavigateToVisaHelp={handleNavigateToVisaHelpFromYesWithMM}
+              />
+            )}
+
+            {currentStep === 'noHelpWithVisa' && (
+              <NoHelpWithVisaScreen onFinish={handleNoHelpWithVisaComplete} />
+            )}
+
+            {currentStep === 'feedback' && (
+              <FeedbackScreen onContinue={handleFeedbackComplete} />
+            )}
+
+            {currentStep === 'noWithoutMM' && (
+              <NoWithoutMMScreen
+                onCompleteCancellation={handleNoWithoutMMComplete}
+                onNavigateToNoHelpWithVisa={handleNavigateToNoHelpWithVisaFromNoWithoutMM}
+                onNavigateToVisaHelp={handleNavigateToVisaHelpFromNoWithoutMM}
+              />
+            )}
+
+            {currentStep === 'visaHelp' && (
+              <VisaHelp onFinish={handleVisaHelpComplete} />
             )}
 
             {currentStep === 'downsell' && (

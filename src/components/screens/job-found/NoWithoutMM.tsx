@@ -4,17 +4,28 @@ import { useState } from 'react';
 
 interface JobNotThroughMMScreenProps {
     onCompleteCancellation: (hasImmigrationLawyer: boolean, visaType?: string) => void;
+    onNavigateToNoHelpWithVisa: () => void;
+    onNavigateToVisaHelp: () => void;
 }
 
-export default function JobNotThroughMMScreen({ onCompleteCancellation }: JobNotThroughMMScreenProps) {
+export default function JobNotThroughMMScreen({ onCompleteCancellation, onNavigateToNoHelpWithVisa, onNavigateToVisaHelp }: JobNotThroughMMScreenProps) {
     const [selectedOption, setSelectedOption] = useState<boolean | null>(null);
     const [visaType, setVisaType] = useState('');
 
     const handleSubmit = () => {
-        if (selectedOption !== null) {
+        if (selectedOption === true && visaType.trim() !== '') {
+            // If "Yes" is selected and visa input is filled, navigate to NoHelpWithVisa
+            onNavigateToNoHelpWithVisa();
+        } else if (selectedOption === false && visaType.trim() !== '') {
+            // If "No" is selected and visa input is filled, navigate to VisaHelp
+            onNavigateToVisaHelp();
+        } else if (selectedOption !== null) {
+            // For other cases, complete cancellation normally
             onCompleteCancellation(selectedOption, visaType);
         }
     };
+
+    const isFormValid = selectedOption !== null && visaType.trim() !== '';
 
     return (
         <div className="flex flex-col w-full p-5">
@@ -55,11 +66,10 @@ export default function JobNotThroughMMScreen({ onCompleteCancellation }: JobNot
                             onChange={() => setSelectedOption(true)}
                             className="sr-only"
                         />
-                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                            selectedOption === true 
-                                ? 'border-gray-800 bg-gray-800' 
-                                : 'border-gray-400 bg-white'
-                        }`}>
+                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${selectedOption === true
+                            ? 'border-gray-800 bg-gray-800'
+                            : 'border-gray-400 bg-white'
+                            }`}>
                             {selectedOption === true && (
                                 <div className="w-2 h-2 rounded-full bg-white"></div>
                             )}
@@ -80,11 +90,10 @@ export default function JobNotThroughMMScreen({ onCompleteCancellation }: JobNot
                             onChange={() => setSelectedOption(false)}
                             className="sr-only"
                         />
-                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                            selectedOption === false 
-                                ? 'border-gray-800 bg-gray-800' 
-                                : 'border-gray-400 bg-white'
-                        }`}>
+                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${selectedOption === false
+                            ? 'border-gray-800 bg-gray-800'
+                            : 'border-gray-400 bg-white'
+                            }`}>
                             {selectedOption === false && (
                                 <div className="w-2 h-2 rounded-full bg-white"></div>
                             )}
@@ -136,12 +145,11 @@ export default function JobNotThroughMMScreen({ onCompleteCancellation }: JobNot
             <div className="mt-auto">
                 <button
                     onClick={handleSubmit}
-                    disabled={selectedOption === null}
-                    className={`w-full h-[52px] px-6 py-3 rounded-lg font-semibold text-base transition-all duration-200 font-dm-sans ${
-                        selectedOption !== null
-                            ? 'bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
-                            : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                    }`}
+                    disabled={!isFormValid}
+                    className={`w-full h-[52px] px-6 py-3 rounded-lg font-semibold text-base transition-all duration-200 font-dm-sans ${isFormValid
+                        ? 'bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
+                        : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                        }`}
                 >
                     Complete cancellation
                 </button>

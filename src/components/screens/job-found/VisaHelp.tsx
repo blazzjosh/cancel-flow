@@ -21,8 +21,8 @@ export default function VisaHelpCompleteScreen({ onFinish }: VisaHelpCompleteScr
                 {/* Profile section */}
                 <div className="flex items-center mb-4">
                     <div className="w-12 h-12 bg-gray-300 rounded-full mr-3 flex-shrink-0 overflow-hidden">
-                        <img 
-                            src="/profile-placeholder.jpg" 
+                        <img
+                            src="/mihailo-profile.jpeg"
                             alt="Mihailo Bozic profile"
                             className="w-full h-full object-cover"
                             onError={(e) => {
@@ -44,9 +44,9 @@ export default function VisaHelpCompleteScreen({ onFinish }: VisaHelpCompleteScr
                 {/* Personal message */}
                 <div className="space-y-4 text-base text-gray-700 font-dm-sans leading-[24px]">
                     <p>I&apos;ll be reaching out soon to help with the visa side of things.</p>
-                    
+
                     <p>We&apos;ve got your back, whether it&apos;s questions, paperwork, or just figuring out your options.</p>
-                    
+
                     <p className="font-medium">Keep an eye on your inbox, I&apos;ll be in touch shortly.</p>
                 </div>
             </div>

@@ -4,16 +4,28 @@ import { useState } from 'react';
 
 interface YesWithMMScreenProps {
     onCompleteCancellation: (hasImmigrationLawyer: boolean) => void;
+    onNavigateToNoHelpWithVisa: () => void;
+    onNavigateToVisaHelp: () => void;
 }
 
-export default function YesWithMMScreen({ onCompleteCancellation }: YesWithMMScreenProps) {
+export default function YesWithMMScreen({ onCompleteCancellation, onNavigateToNoHelpWithVisa, onNavigateToVisaHelp }: YesWithMMScreenProps) {
     const [selectedOption, setSelectedOption] = useState<boolean | null>(null);
+    const [visaInput, setVisaInput] = useState('');
 
     const handleSubmit = () => {
-        if (selectedOption !== null) {
+        if (selectedOption === true && visaInput.trim() !== '') {
+            // If "Yes" is selected and visa input is filled, navigate to NoHelpWithVisa
+            onNavigateToNoHelpWithVisa();
+        } else if (selectedOption === false && visaInput.trim() !== '') {
+            // If "No" is selected and visa input is filled, navigate to VisaHelp
+            onNavigateToVisaHelp();
+        } else if (selectedOption !== null && visaInput.trim() === '') {
+            // For cases where radio is selected but no visa input, complete cancellation normally
             onCompleteCancellation(selectedOption);
         }
     };
+
+    const isFormValid = selectedOption !== null && visaInput.trim() !== '';
 
     return (
         <div className="flex flex-col w-full p-5">
@@ -45,11 +57,10 @@ export default function YesWithMMScreen({ onCompleteCancellation }: YesWithMMScr
                             onChange={() => setSelectedOption(true)}
                             className="sr-only"
                         />
-                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                            selectedOption === true 
-                                ? 'border-gray-800 bg-gray-800' 
-                                : 'border-gray-400 bg-white'
-                        }`}>
+                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${selectedOption === true
+                            ? 'border-gray-800 bg-gray-800'
+                            : 'border-gray-400 bg-white'
+                            }`}>
                             {selectedOption === true && (
                                 <div className="w-2 h-2 rounded-full bg-white"></div>
                             )}
@@ -70,11 +81,10 @@ export default function YesWithMMScreen({ onCompleteCancellation }: YesWithMMScr
                             onChange={() => setSelectedOption(false)}
                             className="sr-only"
                         />
-                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                            selectedOption === false 
-                                ? 'border-gray-800 bg-gray-800' 
-                                : 'border-gray-400 bg-white'
-                        }`}>
+                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${selectedOption === false
+                            ? 'border-gray-800 bg-gray-800'
+                            : 'border-gray-400 bg-white'
+                            }`}>
                             {selectedOption === false && (
                                 <div className="w-2 h-2 rounded-full bg-white"></div>
                             )}
@@ -96,6 +106,8 @@ export default function YesWithMMScreen({ onCompleteCancellation }: YesWithMMScr
                     </label>
                     <input
                         type="text"
+                        value={visaInput}
+                        onChange={(e) => setVisaInput(e.target.value)}
                         className="w-full h-12 px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500 text-base font-dm-sans"
                         placeholder=""
                     />
@@ -112,6 +124,8 @@ export default function YesWithMMScreen({ onCompleteCancellation }: YesWithMMScr
                     </p>
                     <input
                         type="text"
+                        value={visaInput}
+                        onChange={(e) => setVisaInput(e.target.value)}
                         className="w-full h-12 px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500 text-base font-dm-sans"
                         placeholder=""
                     />
@@ -122,12 +136,11 @@ export default function YesWithMMScreen({ onCompleteCancellation }: YesWithMMScr
             <div className="mt-auto">
                 <button
                     onClick={handleSubmit}
-                    disabled={selectedOption === null}
-                    className={`w-full h-[52px] px-6 py-3 rounded-lg font-semibold text-base transition-all duration-200 ${
-                        selectedOption !== null
-                            ? 'bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
-                            : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                    }`}
+                    disabled={!isFormValid}
+                    className={`w-full h-[52px] px-6 py-3 rounded-lg font-semibold text-base transition-all duration-200 ${isFormValid
+                        ? 'bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
+                        : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                        }`}
                 >
                     Complete cancellation
                 </button>

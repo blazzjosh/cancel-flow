@@ -5,8 +5,8 @@ import CancellationFlowButton from '../CancellationFlowButton';
 
 export interface GetDiscountButtonProps {
     onClick: () => void;
-    discountedPrice: string;
-    originalPrice: string;
+    discountedPrice?: string;
+    originalPrice?: string;
     disabled?: boolean;
     loading?: boolean;
     className?: string;
@@ -32,7 +32,11 @@ const GetDiscountButton: React.FC<GetDiscountButtonProps> = ({
             loading={loading}
             className={className}
         >
-            Get 50% off | {discountedPrice} <span className="line-through text-green-200">{originalPrice}</span>
+            {discountedPrice && originalPrice ? (
+                <>Get 50% off | {discountedPrice} <span className="line-through text-green-200">{originalPrice}</span></>
+            ) : (
+                'Get 50% off'
+            )}
         </CancellationFlowButton>
     );
 };

@@ -23,6 +23,90 @@ import {
   OfferDeclined
 } from './screens';
 
+// FlowStepConfig class for managing step configuration
+class FlowStepConfig {
+  constructor(
+    public name: string,
+    public stepNumber: number,
+    public totalSteps: number,
+    public isCompletion: boolean = false,
+    public imageHeight: '400px' | '600px' = '400px',
+    public hideProgress: boolean = false,
+    public hideBackButton: boolean = false,
+    public headerText: string = 'Subscription Cancellation'
+  ) { }
+
+  getProgressState(): {
+    firstPill: 'completed' | 'active' | 'pending';
+    secondPill: 'completed' | 'active' | 'pending';
+    thirdPill: 'completed' | 'active' | 'pending';
+    stepText: string;
+  } {
+    if (this.isCompletion) {
+      return {
+        firstPill: 'completed',
+        secondPill: 'completed',
+        thirdPill: 'completed',
+        stepText: 'Completed'
+      };
+    }
+
+    switch (this.stepNumber) {
+      case 1:
+        return {
+          firstPill: 'active',
+          secondPill: 'pending',
+          thirdPill: 'pending',
+          stepText: `Step ${this.stepNumber} of ${this.totalSteps}`
+        };
+      case 2:
+        return {
+          firstPill: 'completed',
+          secondPill: 'active',
+          thirdPill: 'pending',
+          stepText: `Step ${this.stepNumber} of ${this.totalSteps}`
+        };
+      case 3:
+        return {
+          firstPill: 'completed',
+          secondPill: 'completed',
+          thirdPill: 'active',
+          stepText: `Step ${this.stepNumber} of ${this.totalSteps}`
+        };
+      case 4:
+        return {
+          firstPill: 'completed',
+          secondPill: 'completed',
+          thirdPill: 'completed',
+          stepText: `Step ${this.stepNumber} of ${this.totalSteps}`
+        };
+      default:
+        return {
+          firstPill: 'pending',
+          secondPill: 'pending',
+          thirdPill: 'pending',
+          stepText: `Step ${this.stepNumber} of ${this.totalSteps}`
+        };
+    }
+  }
+}
+
+// Flow configuration
+const FLOW_STEPS = {
+  initial: new FlowStepConfig('initial', 1, 3),
+  congrats: new FlowStepConfig('congrats', 1, 3, false, '600px'),
+  feedback: new FlowStepConfig('feedback', 2, 3),
+  yesWithMM: new FlowStepConfig('yesWithMM', 3, 3),
+  noWithoutMM: new FlowStepConfig('noWithoutMM', 3, 3),
+  noHelpWithVisa: new FlowStepConfig('noHelpWithVisa', 3, 3, true, '600px'),
+  visaHelp: new FlowStepConfig('visaHelp', 3, 3, true, '600px'),
+  downsell: new FlowStepConfig('downsell', 1, 3),
+  offerAccept1: new FlowStepConfig('offerAccept1', 2, 3, false, '400px', true, true, 'Subscription'),
+  offerDeclined: new FlowStepConfig('offerDeclined', 2, 3),
+  cancelReason: new FlowStepConfig('cancelReason', 3, 3),
+  cancelComplete: new FlowStepConfig('cancelComplete', 4, 4, true, '600px')
+};
+
 interface CancellationFlowProps {
   isOpen: boolean;
   onClose: () => void;
@@ -434,7 +518,7 @@ export default function CancellationFlow({ isOpen, onClose, subscriptionId, user
       >
         {/* Header */}
         <header className="flex w-full h-[60px] items-center justify-center gap-2.5 px-4 py-[18px] relative border-b border-gray-300">
-          {currentStep !== 'initial' && (
+          {currentStep !== 'initial' && !FLOW_STEPS[currentStep as keyof typeof FLOW_STEPS]?.hideBackButton && (
             <button
               onClick={handleBack}
               className="absolute left-4 flex items-center text-gray-600 hover:text-gray-800 transition-colors"
@@ -451,30 +535,30 @@ export default function CancellationFlow({ isOpen, onClose, subscriptionId, user
               id="modal-title"
               className="text-base text-gray-800 font-dm-sans"
             >
-              Subscription Cancellation
+              {FLOW_STEPS[currentStep as keyof typeof FLOW_STEPS]?.headerText || 'Subscription Cancellation'}
             </h1>
 
             {/* Progress indicator - pill style */}
-            {currentStep !== 'initial' && (
+            {currentStep !== 'initial' && !FLOW_STEPS[currentStep as keyof typeof FLOW_STEPS]?.hideProgress && (
               <div className="flex items-center space-x-3">
                 <div className="flex items-center space-x-1">
-                  <div className={`w-6 h-3 rounded-full transition-colors ${currentStep === 'feedback' || currentStep === 'yesWithMM' || currentStep === 'noWithoutMM' || currentStep === 'noHelpWithVisa' || currentStep === 'visaHelp' || currentStep === 'downsell' || currentStep === 'offerAccept1' || currentStep === 'offerDeclined' || currentStep === 'cancelReason' || currentStep === 'cancelComplete'
+                  <div className={`w-6 h-3 rounded-full transition-colors ${FLOW_STEPS[currentStep as keyof typeof FLOW_STEPS]?.getProgressState().firstPill === 'completed'
                     ? 'bg-[#4abf71]'
-                    : currentStep === 'congrats'
+                    : FLOW_STEPS[currentStep as keyof typeof FLOW_STEPS]?.getProgressState().firstPill === 'active'
                       ? 'bg-gray-400'
                       : 'bg-gray-300'
                     }`}>
                   </div>
-                  <div className={`w-6 h-3 rounded-full transition-colors ${currentStep === 'yesWithMM' || currentStep === 'downsell' || currentStep === 'noWithoutMM' || currentStep === 'noHelpWithVisa' || currentStep === 'visaHelp' || currentStep === 'offerAccept1' || currentStep === 'offerDeclined' || currentStep === 'cancelReason'
+                  <div className={`w-6 h-3 rounded-full transition-colors ${FLOW_STEPS[currentStep as keyof typeof FLOW_STEPS]?.getProgressState().secondPill === 'completed'
                     ? 'bg-[#4abf71]'
-                    : currentStep === 'feedback'
+                    : FLOW_STEPS[currentStep as keyof typeof FLOW_STEPS]?.getProgressState().secondPill === 'active'
                       ? 'bg-gray-400'
                       : 'bg-gray-300'
                     }`}>
                   </div>
-                  <div className={`w-6 h-3 rounded-full transition-colors ${currentStep === 'noHelpWithVisa' || currentStep === 'visaHelp'
+                  <div className={`w-6 h-3 rounded-full transition-colors ${FLOW_STEPS[currentStep as keyof typeof FLOW_STEPS]?.getProgressState().thirdPill === 'completed'
                     ? 'bg-[#4abf71]'
-                    : currentStep === 'yesWithMM' || currentStep === 'noWithoutMM' || currentStep === 'downsell' || currentStep === 'offerAccept1' || currentStep === 'offerDeclined' || currentStep === 'cancelReason'
+                    : FLOW_STEPS[currentStep as keyof typeof FLOW_STEPS]?.getProgressState().thirdPill === 'active'
                       ? 'bg-gray-400'
                       : 'bg-gray-300'
                     }`}>
@@ -485,7 +569,7 @@ export default function CancellationFlow({ isOpen, onClose, subscriptionId, user
                   )}
                 </div>
                 <span className="text-sm text-gray-500 font-dm-sans">
-                  {currentStep === 'noHelpWithVisa' || currentStep === 'visaHelp' ? 'Completed' : `Step ${currentStep === 'congrats' ? '1' : currentStep === 'feedback' ? '2' : currentStep === 'yesWithMM' || currentStep === 'noWithoutMM' || currentStep === 'downsell' || currentStep === 'offerAccept1' || currentStep === 'offerDeclined' || currentStep === 'cancelReason' ? '3' : currentStep === 'cancelComplete' ? '4' : '3'} of ${currentStep === 'cancelComplete' ? '4' : '3'}`}
+                  {FLOW_STEPS[currentStep as keyof typeof FLOW_STEPS]?.getProgressState().stepText || 'Step 1 of 3'}
                 </span>
               </div>
             )}

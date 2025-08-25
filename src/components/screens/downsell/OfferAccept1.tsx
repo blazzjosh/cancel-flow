@@ -29,9 +29,9 @@ export default function OfferAccept1Screen({
 
             {/* Success message */}
             <div className="mb-8">
-                <p className="text-base font-medium leading-[24px] text-gray-700 font-dm-sans mb-2">
+                <p className="text-[36px] font-semibold leading-[40px] tracking-[-0.03em] text-[#41403D] font-dm-sans mb-2">
                     You&apos;re still on the path to your dream role.{' '}
-                    <span className="text-purple-600 font-semibold">Let&apos;s make it happen together!</span>
+                    <span className="text-[#9A6FFF] font-semibold">Let&apos;s make it happen together!</span>
                 </p>
             </div>
 

@@ -443,7 +443,7 @@ export default function CancellationFlow({ isOpen, onClose, subscriptionId, user
           <div className="flex items-center justify-center gap-[24px] ">
             <h1
               id="modal-title"
-              className="text-base  text-gray-800 font-dm-sans"
+              className="text-base text-gray-800 font-dm-sans"
             >
               Subscription Cancellation
             </h1>

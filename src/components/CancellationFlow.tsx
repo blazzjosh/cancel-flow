@@ -198,8 +198,14 @@ export default function CancellationFlow({ isOpen, onClose, subscriptionId, user
         .eq('user_id', userId)
         .eq('subscription_id', subscriptionId);
 
-      // Navigate to NoWithoutMM screen instead of completing
-      setCurrentStep('noWithoutMM');
+      // Route based on the original survey answer
+      if (surveyAnswers.foundJobWithMigrateMate === 'Yes') {
+        // User found job with MigrateMate, go to YesWithMM screen
+        setCurrentStep('yesWithMM');
+      } else {
+        // User found job without MigrateMate, go to NoWithoutMM screen
+        setCurrentStep('noWithoutMM');
+      }
     } catch (error) {
       console.error('Error saving feedback:', error);
     }
@@ -258,7 +264,7 @@ export default function CancellationFlow({ isOpen, onClose, subscriptionId, user
     if (currentStep === 'congrats') {
       setCurrentStep('initial');
     } else if (currentStep === 'yesWithMM') {
-      setCurrentStep('congrats');
+      setCurrentStep('feedback');
     } else if (currentStep === 'noHelpWithVisa') {
       // Go back to the previous step - could be either yesWithMM or noWithoutMM
       // For now, we'll go back to congrats and let the user choose again
@@ -452,19 +458,25 @@ export default function CancellationFlow({ isOpen, onClose, subscriptionId, user
             {currentStep !== 'initial' && (
               <div className="flex items-center space-x-3">
                 <div className="flex items-center space-x-1">
-                  <div className={`w-6 h-3 rounded-full transition-colors ${currentStep === 'congrats'
-                    ? 'bg-gray-400'
-                    : 'bg-gray-300'
+                  <div className={`w-6 h-3 rounded-full transition-colors ${currentStep === 'feedback' || currentStep === 'yesWithMM' || currentStep === 'noWithoutMM' || currentStep === 'noHelpWithVisa' || currentStep === 'visaHelp' || currentStep === 'downsell' || currentStep === 'offerAccept1' || currentStep === 'offerDeclined' || currentStep === 'cancelReason' || currentStep === 'cancelComplete'
+                    ? 'bg-[#4abf71]'
+                    : currentStep === 'congrats'
+                      ? 'bg-gray-400'
+                      : 'bg-gray-300'
                     }`}>
                   </div>
-                  <div className={`w-6 h-3 rounded-full transition-colors ${currentStep === 'yesWithMM' || currentStep === 'downsell' || currentStep === 'feedback'
-                    ? 'bg-gray-400'
-                    : 'bg-gray-300'
+                  <div className={`w-6 h-3 rounded-full transition-colors ${currentStep === 'yesWithMM' || currentStep === 'downsell' || currentStep === 'noWithoutMM' || currentStep === 'noHelpWithVisa' || currentStep === 'visaHelp' || currentStep === 'offerAccept1' || currentStep === 'offerDeclined' || currentStep === 'cancelReason'
+                    ? 'bg-[#4abf71]'
+                    : currentStep === 'feedback'
+                      ? 'bg-gray-400'
+                      : 'bg-gray-300'
                     }`}>
                   </div>
-                  <div className={`w-6 h-3 rounded-full transition-colors ${currentStep === 'noHelpWithVisa' || currentStep === 'noWithoutMM' || currentStep === 'visaHelp' || currentStep === 'offerAccept1' || currentStep === 'offerDeclined' || currentStep === 'cancelReason'
-                    ? 'bg-gray-400'
-                    : 'bg-gray-300'
+                  <div className={`w-6 h-3 rounded-full transition-colors ${currentStep === 'noHelpWithVisa' || currentStep === 'visaHelp'
+                    ? 'bg-[#4abf71]'
+                    : currentStep === 'yesWithMM' || currentStep === 'noWithoutMM' || currentStep === 'downsell' || currentStep === 'offerAccept1' || currentStep === 'offerDeclined' || currentStep === 'cancelReason'
+                      ? 'bg-gray-400'
+                      : 'bg-gray-300'
                     }`}>
                   </div>
                   {currentStep === 'cancelComplete' && (
@@ -473,7 +485,7 @@ export default function CancellationFlow({ isOpen, onClose, subscriptionId, user
                   )}
                 </div>
                 <span className="text-sm text-gray-500 font-dm-sans">
-                  Step {currentStep === 'congrats' ? '1' : currentStep === 'yesWithMM' || currentStep === 'downsell' || currentStep === 'feedback' ? '2' : currentStep === 'noHelpWithVisa' || currentStep === 'noWithoutMM' || currentStep === 'visaHelp' || currentStep === 'offerAccept1' || currentStep === 'offerDeclined' || currentStep === 'cancelReason' ? '3' : currentStep === 'cancelComplete' ? '4' : '3'} of {currentStep === 'cancelComplete' ? '4' : '3'}
+                  {currentStep === 'noHelpWithVisa' || currentStep === 'visaHelp' ? 'Completed' : `Step ${currentStep === 'congrats' ? '1' : currentStep === 'feedback' ? '2' : currentStep === 'yesWithMM' || currentStep === 'noWithoutMM' || currentStep === 'downsell' || currentStep === 'offerAccept1' || currentStep === 'offerDeclined' || currentStep === 'cancelReason' ? '3' : currentStep === 'cancelComplete' ? '4' : '3'} of ${currentStep === 'cancelComplete' ? '4' : '3'}`}
                 </span>
               </div>
             )}
@@ -585,7 +597,7 @@ export default function CancellationFlow({ isOpen, onClose, subscriptionId, user
           </div>
 
           {/* Desktop Image - shows on right on desktop */}
-          <div className="hidden md:block relative w-[450px] h-[400px] rounded-lg overflow-hidden">
+          <div className={`hidden md:block relative w-[450px] rounded-lg overflow-hidden ${currentStep === 'congrats' ? 'h-[600px]' : 'h-[400px]'}`}>
             <Image
               className="object-cover"
               alt="City skyline illustration"

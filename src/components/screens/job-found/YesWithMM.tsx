@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { CancellationFlowButton } from '@/components/ui';
 
 interface YesWithMMScreenProps {
     onCompleteCancellation: (hasImmigrationLawyer: boolean) => void;
@@ -30,23 +31,21 @@ export default function YesWithMMScreen({ onCompleteCancellation, onNavigateToNo
     return (
         <div className="flex flex-col w-full p-5">
             {/* Main heading */}
-            <div className="mb-6">
-                <h2 className="text-[40px] font-semibold leading-[48px] tracking-[-1.08px] text-gray-800 font-dm-sans">
-                    We helped you land the job, now
-                    <br />
-                    let&apos;s help you secure your visa.
+            <div className="mb-5">
+                <h2 className="text-[32px] font-semibold leading-[36px] tracking-[-0.03em] text-[#41403d] font-dm-sans">
+                    We helped you land the job, now let&apos;s help you secure your visa.
                 </h2>
             </div>
 
             {/* Question */}
-            <div className="mb-8">
+            <div className="mb-5">
                 <p className="text-base font-medium leading-[24px] text-gray-700 font-dm-sans">
                     Is your company providing an immigration lawyer to help with your visa?
                 </p>
             </div>
 
             {/* Radio options */}
-            <div className="flex flex-col gap-4 mb-8">
+            <div className="flex flex-col gap-3 mb-5">
                 <label className="flex items-center cursor-pointer">
                     <div className="relative mr-3">
                         <input
@@ -98,8 +97,8 @@ export default function YesWithMMScreen({ onCompleteCancellation, onNavigateToNo
 
             {/* Conditional content based on selection */}
             {selectedOption === true && (
-                <div className="mb-8">
-                    <label className="block mb-2">
+                <div className="mb-6">
+                    <label className="block mb-3">
                         <span className="text-base font-medium text-gray-700 font-dm-sans">
                             What visa will you be applying for?*
                         </span>
@@ -108,42 +107,42 @@ export default function YesWithMMScreen({ onCompleteCancellation, onNavigateToNo
                         type="text"
                         value={visaInput}
                         onChange={(e) => setVisaInput(e.target.value)}
-                        className="w-full h-12 px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500 text-base font-dm-sans"
-                        placeholder=""
+                        className="w-full h-12 px-4 py-3 border-1 border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500 text-base font-dm-sans text-gray-800 placeholder-gray-400"
+                        placeholder="Type your visa type here..."
                     />
                 </div>
             )}
 
             {selectedOption === false && (
-                <div className="mb-8">
-                    <p className="text-base font-medium text-gray-700 font-dm-sans mb-2">
+                <div className="mb-6">
+                    <p className="text-base font-medium text-gray-700 font-dm-sans mb-3">
                         We can connect you with one of our trusted partners.
                     </p>
-                    <p className="text-base font-medium text-gray-700 font-dm-sans mb-4">
+                    <p className="text-base font-medium text-gray-700 font-dm-sans mb-3">
                         Which visa would you like to apply for?*
                     </p>
                     <input
                         type="text"
                         value={visaInput}
                         onChange={(e) => setVisaInput(e.target.value)}
-                        className="w-full h-12 px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500 text-base font-dm-sans"
-                        placeholder=""
+                        className="w-full h-12 px-4 py-3 border-1 border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500 text-base font-dm-sans text-gray-800 placeholder-gray-400"
+                        placeholder="Type your visa type here..."
                     />
                 </div>
             )}
 
+            {/* Separator */}
+            <div className="border-t border-gray-200"></div>
+
             {/* Complete cancellation button */}
-            <div className="mt-auto">
-                <button
+            <div className="mt-5">
+                <CancellationFlowButton
+                    variant="primary"
                     onClick={handleSubmit}
                     disabled={!isFormValid}
-                    className={`w-full h-[52px] px-6 py-3 rounded-lg font-semibold text-base transition-all duration-200 ${isFormValid
-                        ? 'bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
-                        : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                        }`}
                 >
                     Complete cancellation
-                </button>
+                </CancellationFlowButton>
             </div>
         </div>
     );

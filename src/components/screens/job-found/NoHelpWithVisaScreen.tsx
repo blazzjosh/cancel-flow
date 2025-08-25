@@ -10,27 +10,24 @@ export default function NoHelpWithVisaScreen({ onFinish }: NoHelpWithVisaScreenP
     return (
         <div className="flex flex-col w-full p-5">
             {/* Main heading */}
-            <div className="mb-6">
-                <h2 className="text-[36px] font-semibold leading-[36px] tracking-[-1.08px] text-[#41403D] font-dm-sans mb-4">
-                    Perfect! You&apos;re all set. 🎯
+            <div className="mb-5">
+                <h2 className="text-[32px] font-semibold leading-[36px] tracking-[-1.08px] text-[#41403D] font-dm-sans">
+                    All done, your cancellation's been processed.
                 </h2>
-                <p className="text-base font-medium text-gray-700 font-dm-sans">
-                    It sounds like you have everything you need to move forward with your new role.
-                </p>
             </div>
 
             {/* Success message */}
-            <div className="mb-8">
-                <p className="text-base font-medium leading-[24px] text-gray-700 font-dm-sans mb-4">
-                    We&apos;re thrilled that MigrateMate could help you on your journey to finding your dream job.
-                </p>
+            <div className="mb-5">
                 <p className="text-base font-medium leading-[24px] text-gray-700 font-dm-sans">
-                    Best of luck with your new role, and remember - you&apos;re always welcome back if you need anything in the future!
+                    We're stoked to hear you've landed a job and sorted your visa. Big congrats from the team. 👋
                 </p>
             </div>
 
+             {/* Separator */}
+             <div className="border-t border-gray-200"></div>
+
             {/* Action button */}
-            <div className="mt-auto">
+            <div className="mt-5">
                 <CancellationFlowButton
                     variant="primary"
                     onClick={onFinish}

@@ -11,36 +11,40 @@ export default function FeedbackScreen({ onContinue }: FeedbackScreenProps) {
     const [feedback, setFeedback] = useState('');
 
     const handleContinue = () => {
-        if (feedback.trim()) {
+        if (feedback.trim().length >= 25) {
             onContinue(feedback);
         }
     };
 
-    const isFormValid = feedback.trim().length > 0;
+    const isFormValid = feedback.trim().length >= 25;
 
     return (
         <div className="flex flex-col w-full p-5">
             {/* Main heading */}
             <div className="mb-6">
                 <h2 className="text-[36px] font-semibold leading-[36px] tracking-[-1.08px] text-[#41403D] font-dm-sans mb-4">
-                    We&apos;d love your feedback! 💭
+                    What’s one thing you wish we could’ve helped you with?
                 </h2>
-                <p className="text-base font-medium text-gray-700 font-dm-sans">
-                    Since you found a job without using MigrateMate, we&apos;d love to know how we can improve.
-                </p>
+
             </div>
 
             {/* Feedback input */}
             <div className="mb-8">
-                <p className="text-base font-medium text-gray-700 font-dm-sans mb-4">
-                    What could we have done better to help you find your role?*
+                <p className="text-base  text-gray-700 font-dm-sans mb-4">
+                    We're always looking to improve, your thoughts can help us make Migrate Mate more useful for others.*
+
                 </p>
-                <textarea
-                    value={feedback}
-                    onChange={(e) => setFeedback(e.target.value)}
-                    className="w-full h-32 p-4 border-2 border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500 text-base font-dm-sans"
-                    placeholder="Share your thoughts on how we can improve our service..."
-                />
+                <div className="relative">
+                    <textarea
+                        value={feedback}
+                        onChange={(e) => setFeedback(e.target.value)}
+                        className="w-full h-32 p-4 pr-24 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500 text-base font-dm-sans text-gray-800 placeholder-gray-400"
+                        placeholder="Type your feedback here..."
+                    />
+                    <div className="absolute bottom-2 right-2 text-sm text-gray-500 font-dm-sans pointer-events-none">
+                        Min 25 characters ({feedback.length}/25)
+                    </div>
+                </div>
             </div>
 
             {/* Continue button */}

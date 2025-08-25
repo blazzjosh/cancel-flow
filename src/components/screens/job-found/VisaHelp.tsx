@@ -10,62 +10,40 @@ export default function VisaHelp({ onFinish }: VisaHelpProps) {
     return (
         <div className="flex flex-col w-full p-5">
             {/* Main heading */}
-            <div className="mb-6">
-                <h2 className="text-[36px] font-semibold leading-[36px] tracking-[-1.08px] text-[#41403D] font-dm-sans mb-4">
-                    We&apos;re here to help! 🛂
+            <div className="mb-4">
+                <h2 className="text-[32px] font-semibold leading-[36px] tracking-[-1.08px] text-[#41403D] font-dm-sans">
+                    Your cancellation's all sorted, mate, no more charges.
                 </h2>
-                <p className="text-base font-medium text-gray-700 font-dm-sans">
-                    Visa and immigration processes can be complex, but we&apos;ve got your back.
-                </p>
             </div>
 
-            {/* Help information */}
-            <div className="mb-8">
-                <div className="bg-blue-50 p-6 rounded-lg border-2 border-blue-200">
-                    <h3 className="text-xl font-semibold text-gray-800 font-dm-sans mb-4">
-                        What we can help you with:
-                    </h3>
-                    <ul className="space-y-3 text-base text-gray-700 font-dm-sans">
-                        <li className="flex items-start">
-                            <span className="text-blue-500 mr-3 mt-1">✓</span>
-                            <div>
-                                <strong>Visa Application Guidance:</strong> Step-by-step assistance with visa applications
+            {/* Message from Mihailo */}
+            <div className="mb-4">
+                <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
+                    <div className="flex items-start space-x-4">
+                        <div className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
+                            <img
+                                src="/mihailo-profile.jpeg"
+                                alt="Mihailo Bozic"
+                                className="w-full h-full object-cover"
+                            />
+                        </div>
+                        <div className="flex-1">
+                            <div className="flex flex-col space-y-1 mb-4">
+                                <span className="font-semibold text-gray-800 font-dm-sans">Mihailo Bozic</span>
+                                <span className="text-sm text-gray-500 font-dm-sans">&lt;mihailo@migratemate.co&gt;</span>
                             </div>
-                        </li>
-                        <li className="flex items-start">
-                            <span className="text-blue-500 mr-3 mt-1">✓</span>
-                            <div>
-                                <strong>Document Preparation:</strong> Help with required documents and forms
+                            <div className="space-y-3 text-sm text-gray-700 font-dm-sans">
+                                <p className='font-bold'>I'll be reaching out soon to help with the visa side of things.</p>
+                                <p className='mb-2'>We've got your back, whether it's questions, paperwork, or just figuring out your options.</p>
+                                <p className='mb-2 font-bold'>Keep an eye on your inbox, I'll be in touch shortly.</p>
                             </div>
-                        </li>
-                        <li className="flex items-start">
-                            <span className="text-blue-500 mr-3 mt-1">✓</span>
-                            <div>
-                                <strong>Legal Consultation:</strong> Connect you with immigration experts
-                            </div>
-                        </li>
-                        <li className="flex items-start">
-                            <span className="text-blue-500 mr-3 mt-1">✓</span>
-                            <div>
-                                <strong>Timeline Planning:</strong> Help you understand processing times and deadlines
-                            </div>
-                        </li>
-                    </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            {/* Next steps */}
-            <div className="mb-8">
-                <p className="text-base font-medium leading-[24px] text-gray-700 font-dm-sans mb-4">
-                    Our team will reach out to you within 24 hours to discuss your specific visa needs and create a personalized plan.
-                </p>
-                <p className="text-base font-medium leading-[24px] text-gray-700 font-dm-sans">
-                    In the meantime, your cancellation will be processed, but you&apos;ll still have access to our visa assistance services.
-                </p>
-            </div>
-
             {/* Action button */}
-            <div className="mt-auto">
+            <div className="mt-4">
                 <CancellationFlowButton
                     variant="primary"
                     onClick={onFinish}

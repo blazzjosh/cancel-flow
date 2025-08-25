@@ -1,64 +1,77 @@
 'use client';
 
-interface VisaHelpCompleteScreenProps {
+import { CancellationFlowButton } from '@/components/ui';
+
+interface VisaHelpProps {
     onFinish: () => void;
 }
 
-export default function VisaHelpCompleteScreen({ onFinish }: VisaHelpCompleteScreenProps) {
+export default function VisaHelp({ onFinish }: VisaHelpProps) {
     return (
         <div className="flex flex-col w-full p-5">
             {/* Main heading */}
             <div className="mb-6">
-                <h2 className="text-[40px] font-semibold leading-[48px] tracking-[-1.08px] text-gray-800 font-dm-sans">
-                    Your cancellation&apos;s all sorted, mate,
-                    <br />
-                    no more charges.
+                <h2 className="text-[36px] font-semibold leading-[36px] tracking-[-1.08px] text-[#41403D] font-dm-sans mb-4">
+                    We&apos;re here to help! 🛂
                 </h2>
+                <p className="text-base font-medium text-gray-700 font-dm-sans">
+                    Visa and immigration processes can be complex, but we&apos;ve got your back.
+                </p>
             </div>
 
-            {/* Personal message card */}
-            <div className="mb-8 p-4 bg-gray-50 rounded-lg border border-gray-200">
-                {/* Profile section */}
-                <div className="flex items-center mb-4">
-                    <div className="w-12 h-12 bg-gray-300 rounded-full mr-3 flex-shrink-0 overflow-hidden">
-                        <img
-                            src="/mihailo-profile.jpeg"
-                            alt="Mihailo Bozic profile"
-                            className="w-full h-full object-cover"
-                            onError={(e) => {
-                                const target = e.target as HTMLImageElement;
-                                target.style.display = 'none';
-                                target.nextElementSibling!.classList.remove('hidden');
-                            }}
-                        />
-                        <div className="hidden w-full h-full bg-gray-400 flex items-center justify-center text-white font-semibold text-lg">
-                            MB
-                        </div>
-                    </div>
-                    <div>
-                        <p className="font-semibold text-gray-800 font-dm-sans">Mihailo Bozic</p>
-                        <p className="text-sm text-gray-600 font-dm-sans">&lt;mihailo@migratemate.co&gt;</p>
-                    </div>
-                </div>
-
-                {/* Personal message */}
-                <div className="space-y-4 text-base text-gray-700 font-dm-sans leading-[24px]">
-                    <p>I&apos;ll be reaching out soon to help with the visa side of things.</p>
-
-                    <p>We&apos;ve got your back, whether it&apos;s questions, paperwork, or just figuring out your options.</p>
-
-                    <p className="font-medium">Keep an eye on your inbox, I&apos;ll be in touch shortly.</p>
+            {/* Help information */}
+            <div className="mb-8">
+                <div className="bg-blue-50 p-6 rounded-lg border-2 border-blue-200">
+                    <h3 className="text-xl font-semibold text-gray-800 font-dm-sans mb-4">
+                        What we can help you with:
+                    </h3>
+                    <ul className="space-y-3 text-base text-gray-700 font-dm-sans">
+                        <li className="flex items-start">
+                            <span className="text-blue-500 mr-3 mt-1">✓</span>
+                            <div>
+                                <strong>Visa Application Guidance:</strong> Step-by-step assistance with visa applications
+                            </div>
+                        </li>
+                        <li className="flex items-start">
+                            <span className="text-blue-500 mr-3 mt-1">✓</span>
+                            <div>
+                                <strong>Document Preparation:</strong> Help with required documents and forms
+                            </div>
+                        </li>
+                        <li className="flex items-start">
+                            <span className="text-blue-500 mr-3 mt-1">✓</span>
+                            <div>
+                                <strong>Legal Consultation:</strong> Connect you with immigration experts
+                            </div>
+                        </li>
+                        <li className="flex items-start">
+                            <span className="text-blue-500 mr-3 mt-1">✓</span>
+                            <div>
+                                <strong>Timeline Planning:</strong> Help you understand processing times and deadlines
+                            </div>
+                        </li>
+                    </ul>
                 </div>
             </div>
 
-            {/* Finish button */}
+            {/* Next steps */}
+            <div className="mb-8">
+                <p className="text-base font-medium leading-[24px] text-gray-700 font-dm-sans mb-4">
+                    Our team will reach out to you within 24 hours to discuss your specific visa needs and create a personalized plan.
+                </p>
+                <p className="text-base font-medium leading-[24px] text-gray-700 font-dm-sans">
+                    In the meantime, your cancellation will be processed, but you&apos;ll still have access to our visa assistance services.
+                </p>
+            </div>
+
+            {/* Action button */}
             <div className="mt-auto">
-                <button
+                <CancellationFlowButton
+                    variant="primary"
                     onClick={onFinish}
-                    className="w-full h-[52px] px-6 py-3 rounded-lg bg-purple-600 text-white font-semibold text-base hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-all duration-200 font-dm-sans"
                 >
                     Finish
-                </button>
+                </CancellationFlowButton>
             </div>
         </div>
     );

@@ -1,5 +1,7 @@
 'use client';
 
+import { CancellationFlowButton } from '@/components/ui';
+
 interface OfferAccept1ScreenProps {
     variant: 'A' | 'B';
     daysLeft?: number;
@@ -7,11 +9,11 @@ interface OfferAccept1ScreenProps {
     onComplete: () => void;
 }
 
-export default function OfferAccept1Screen({ 
-    variant, 
-    daysLeft = 28, 
+export default function OfferAccept1Screen({
+    variant,
+    daysLeft = 28,
     nextBillingDate = "XX date",
-    onComplete 
+    onComplete
 }: OfferAccept1ScreenProps) {
     // Pricing based on variant
     const discountedPrice = variant === 'B' ? '$12.50' : '$19.50';
@@ -20,7 +22,7 @@ export default function OfferAccept1Screen({
         <div className="flex flex-col w-full p-5">
             {/* Main heading */}
             <div className="mb-6">
-                <h2 className="text-[40px] font-semibold leading-[48px] tracking-[-1.08px] text-gray-800 font-dm-sans">
+                <h2 className="text-[36px] font-semibold leading-[36px] tracking-[-1.08px] text-[#41403D] font-dm-sans">
                     Great choice, mate!
                 </h2>
             </div>
@@ -48,12 +50,12 @@ export default function OfferAccept1Screen({
 
             {/* Call to action button */}
             <div className="mt-auto">
-                <button
+                <CancellationFlowButton
+                    variant="primary"
                     onClick={onComplete}
-                    className="w-full h-[52px] px-6 py-3 rounded-lg bg-purple-600 text-white font-semibold text-base hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-all duration-200 font-dm-sans"
                 >
                     Land your dream role
-                </button>
+                </CancellationFlowButton>
             </div>
         </div>
     );

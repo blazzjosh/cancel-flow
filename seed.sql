@@ -28,8 +28,13 @@ CREATE TABLE IF NOT EXISTS cancellations (
   subscription_id UUID REFERENCES subscriptions(id) ON DELETE CASCADE,
   downsell_variant TEXT NOT NULL CHECK (downsell_variant IN ('A', 'B')),
   reason TEXT,
+  cancellation_reason TEXT,
+  cancellation_details TEXT,
+  feedback TEXT,
   accepted_downsell BOOLEAN DEFAULT FALSE,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+  completed BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  UNIQUE(user_id, subscription_id)
 );
 
 -- Enable Row Level Security
@@ -52,6 +57,19 @@ CREATE POLICY "Users can insert own cancellations" ON cancellations
 
 CREATE POLICY "Users can view own cancellations" ON cancellations
   FOR SELECT USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can update own cancellations" ON cancellations
+  FOR UPDATE USING (auth.uid() = user_id);
+
+-- Enhanced security: Prevent users from accessing other users' data
+CREATE POLICY "Users can only access own data" ON users
+  FOR ALL USING (auth.uid() = id);
+
+CREATE POLICY "Users can only access own subscriptions" ON subscriptions
+  FOR ALL USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can only access own cancellations" ON cancellations
+  FOR ALL USING (auth.uid() = user_id);
 
 -- Seed data
 INSERT INTO users (id, email) VALUES

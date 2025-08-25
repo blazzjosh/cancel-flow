@@ -1,76 +1,97 @@
 'use client';
 
-interface DownsellOfferScreenProps {
+import { GetDiscountButton, CancellationFlowButton } from '@/components/ui';
+
+interface DownsellScreenProps {
     variant: 'A' | 'B';
     onNavigateToOfferAccept1: () => void;
     onNavigateToOfferDeclined: () => void;
 }
 
-export default function DownsellOfferScreen({ variant, onNavigateToOfferAccept1, onNavigateToOfferDeclined }: DownsellOfferScreenProps) {
-    // Pricing based on variant
-    const pricing = variant === 'B'
-        ? { discounted: '$12.50', original: '$25' }
-        : { discounted: '$19.50', original: '$39' }; // Variant A pricing (if different)
+export default function DownsellScreen({
+    variant,
+    onNavigateToOfferAccept1,
+    onNavigateToOfferDeclined
+}: DownsellScreenProps) {
+    const discountedPrice = variant === 'B' ? '$12.50' : '$19.50';
+    const originalPrice = variant === 'B' ? '$25' : '$39';
 
     return (
         <div className="flex flex-col w-full p-5">
             {/* Main heading */}
             <div className="mb-6">
-                <h2 className="text-[40px] font-semibold leading-[48px] tracking-[-1.08px] text-gray-800 font-dm-sans">
-                    We built this to help you land the
-                    <br />
-                    job, this makes it a little easier.
+                <h2 className="text-[36px] font-semibold leading-[36px] tracking-[-1.08px] text-[#41403D] font-dm-sans mb-4">
+                    Wait! Before you go...
                 </h2>
-            </div>
-
-            {/* Subtitle */}
-            <div className="mb-8">
-                <p className="text-base font-medium leading-[24px] text-gray-700 font-dm-sans">
-                    We&apos;ve been there and we&apos;re here to help you.
+                <p className="text-base font-medium text-gray-700 font-dm-sans">
+                    We&apos;d love to keep helping you find your dream role.
                 </p>
             </div>
 
-            {/* Offer card */}
-            <div className="mb-6 p-6 bg-purple-50 border-2 border-purple-200 rounded-xl">
-                {/* Offer heading */}
-                <div className="text-center mb-4">
-                    <h3 className="text-2xl font-semibold text-gray-800 font-dm-sans mb-2">
-                        Here&apos;s 50% off until you find a job.
+            {/* Offer details */}
+            <div className="mb-8">
+                <div className="bg-gradient-to-r from-green-50 to-blue-50 p-6 rounded-lg border-2 border-green-200">
+                    <h3 className="text-2xl font-bold text-gray-800 font-dm-sans mb-4">
+                        Special Offer: 50% Off Your Next Month
                     </h3>
-
-                    {/* Pricing */}
-                    <div className="flex items-center justify-center gap-3 mb-4">
-                        <span className="text-3xl font-bold text-purple-600 font-dm-sans">
-                            {pricing.discounted}<span className="text-lg font-medium">/month</span>
+                    <div className="flex items-baseline gap-2 mb-4">
+                        <span className="text-4xl font-bold text-green-600 font-dm-sans">
+                            {discountedPrice}
                         </span>
-                        <span className="text-xl text-gray-500 line-through font-dm-sans">
-                            {pricing.original}<span className="text-sm">/month</span>
+                        <span className="text-xl text-gray-500 font-dm-sans line-through">
+                            {originalPrice}
+                        </span>
+                        <span className="text-lg text-gray-600 font-dm-sans">
+                            /month
                         </span>
                     </div>
+                    <p className="text-base text-gray-700 font-dm-sans mb-4">
+                        Get continued access to our job search tools, company database, and personalized support.
+                    </p>
+                    <ul className="space-y-2 text-sm text-gray-600 font-dm-sans">
+                        <li className="flex items-center">
+                            <span className="text-green-500 mr-2">✓</span>
+                            Unlimited job applications
+                        </li>
+                        <li className="flex items-center">
+                            <span className="text-green-500 mr-2">✓</span>
+                            Direct company contact information
+                        </li>
+                        <li className="flex items-center">
+                            <span className="text-green-500 mr-2">✓</span>
+                            Personalized job recommendations
+                        </li>
+                        <li className="flex items-center">
+                            <span className="text-green-500 mr-2">✓</span>
+                            Expert support team
+                        </li>
+                    </ul>
                 </div>
+            </div>
 
-                {/* Accept button */}
-                <button
-                    onClick={onNavigateToOfferAccept1}
-                    className="w-full h-[52px] px-6 py-3 rounded-lg bg-green-600 text-white font-semibold text-base hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all duration-200 font-dm-sans mb-3"
-                >
-                    Get 50% off
-                </button>
-
-                {/* Fine print */}
-                <p className="text-sm text-gray-600 text-center font-dm-sans italic">
-                    You won&apos;t be charged until your next billing date.
+            {/* Disclaimer */}
+            <div className="mb-8">
+                <p className="text-sm text-gray-500 font-dm-sans text-center">
+                    *This offer is valid for one month only. You can cancel anytime before your next billing date.
                 </p>
             </div>
 
-            {/* Decline button */}
-            <div className="mt-auto">
-                <button
+            {/* Action buttons */}
+            <div className="space-y-4 mt-auto">
+                {/* Get discount button */}
+                <GetDiscountButton
+                    onClick={onNavigateToOfferAccept1}
+                    discountedPrice={discountedPrice}
+                    originalPrice={originalPrice}
+                />
+
+                {/* No thanks button */}
+                <CancellationFlowButton
+                    variant="outline"
                     onClick={onNavigateToOfferDeclined}
-                    className="w-full h-[52px] px-6 py-3 rounded-lg border-2 border-gray-300 bg-white text-gray-700 font-semibold text-base hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-all duration-200 font-dm-sans"
                 >
-                    No thanks
-                </button>
+                    No thanks, I&apos;d like to continue with cancellation
+                </CancellationFlowButton>
             </div>
         </div>
     );

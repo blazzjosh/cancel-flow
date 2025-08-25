@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { GetDiscountButton, CompleteCancellationButton } from '@/components/ui';
 
 interface CancellationReasonScreenProps {
     variant: 'A' | 'B';
@@ -10,18 +11,18 @@ interface CancellationReasonScreenProps {
 
 type CancellationReason = 'too-expensive' | 'platform-not-helpful' | 'not-enough-relevant-jobs' | 'decided-not-to-move' | 'other' | '';
 
-export default function CancellationReasonScreen({ 
-    variant, 
-    onGetDiscount, 
-    onCompleteCancellation 
+export default function CancellationReasonScreen({
+    variant,
+    onGetDiscount,
+    onCompleteCancellation
 }: CancellationReasonScreenProps) {
     const [selectedReason, setSelectedReason] = useState<CancellationReason>('');
     const [detailsText, setDetailsText] = useState('');
     const [showError, setShowError] = useState(false);
-    
+
     const discountedPrice = variant === 'B' ? '$12.50' : '$19.50';
     const originalPrice = variant === 'B' ? '$25' : '$39';
-    
+
     const reasons = [
         { value: 'too-expensive', label: 'Too expensive' },
         { value: 'platform-not-helpful', label: 'Platform not helpful' },
@@ -91,7 +92,7 @@ export default function CancellationReasonScreen({
         <div className="flex flex-col w-full p-5">
             {/* Main heading */}
             <div className="mb-6">
-                <h2 className="text-[40px] font-semibold leading-[48px] tracking-[-1.08px] text-gray-800 font-dm-sans mb-4">
+                <h2 className="text-[36px] font-semibold leading-[36px] tracking-[-1.08px] text-[#41403D] font-dm-sans mb-4">
                     What&apos;s the main reason for cancelling?
                 </h2>
                 <p className="text-base font-medium text-gray-700 font-dm-sans">
@@ -121,11 +122,10 @@ export default function CancellationReasonScreen({
                                 onChange={() => handleReasonSelect(reason.value)}
                                 className="sr-only"
                             />
-                            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                                selectedReason === reason.value 
-                                    ? 'border-gray-800 bg-gray-800' 
-                                    : 'border-gray-400 bg-white'
-                            }`}>
+                            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${selectedReason === reason.value
+                                ? 'border-gray-800 bg-gray-800'
+                                : 'border-gray-400 bg-white'
+                                }`}>
                                 {selectedReason === reason.value && (
                                     <div className="w-2 h-2 rounded-full bg-white"></div>
                                 )}
@@ -144,14 +144,14 @@ export default function CancellationReasonScreen({
                     <p className="text-base font-medium text-gray-700 font-dm-sans mb-4">
                         {getFollowUpQuestion(selectedReason)}
                     </p>
-                    
+
                     {/* Error message for insufficient characters */}
                     {selectedReason === 'platform-not-helpful' && detailsText.length > 0 && detailsText.length < 25 && (
                         <p className="text-red-600 text-sm font-dm-sans mb-2">
                             Please enter at least 25 characters so we can understand your feedback*
                         </p>
                     )}
-                    
+
                     {selectedReason === 'too-expensive' ? (
                         <div className="relative">
                             <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-dm-sans">
@@ -184,25 +184,17 @@ export default function CancellationReasonScreen({
             {/* Action buttons */}
             <div className="space-y-4 mt-auto">
                 {/* Get discount button */}
-                <button
+                <GetDiscountButton
                     onClick={handleGetDiscount}
-                    className="w-full h-[52px] px-6 py-3 rounded-lg bg-green-600 text-white font-semibold text-base hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all duration-200 font-dm-sans"
-                >
-                    Get 50% off | {discountedPrice} <span className="line-through text-green-200">{originalPrice}</span>
-                </button>
+                    discountedPrice={discountedPrice}
+                    originalPrice={originalPrice}
+                />
 
                 {/* Complete cancellation button */}
-                <button
+                <CompleteCancellationButton
                     onClick={handleCompleteCancellation}
                     disabled={!isFormValid}
-                    className={`w-full h-[52px] px-6 py-3 rounded-lg font-semibold text-base transition-all duration-200 font-dm-sans ${
-                        isFormValid
-                            ? 'bg-gray-200 text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2'
-                            : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                    }`}
-                >
-                    Complete cancellation
-                </button>
+                />
             </div>
         </div>
     );

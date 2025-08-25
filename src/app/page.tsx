@@ -6,7 +6,7 @@ import CancellationFlow from '@/components/CancellationFlow';
 // Mock user data for UI display
 const mockUser = {
   email: 'user@example.com',
-  id: '1'
+  id: '123e4567-e89b-12d3-a456-426614174000'
 };
 
 // Mock subscription data for UI display
@@ -102,7 +102,7 @@ export default function ProfilePage() {
         <CancellationFlow
           isOpen={showCancellationFlow}
           onClose={() => setShowCancellationFlow(false)}
-          subscriptionId="mock-subscription-id"
+          subscriptionId="987fcdeb-51a2-43d1-9f12-345678901234"
           userId={mockUser.id}
         />
       </div>
@@ -280,7 +280,7 @@ export default function ProfilePage() {
       <CancellationFlow
         isOpen={showCancellationFlow}
         onClose={() => setShowCancellationFlow(false)}
-        subscriptionId="mock-subscription-id"
+        subscriptionId="987fcdeb-51a2-43d1-9f12-345678901234"
         userId={mockUser.id}
       />
     </div>

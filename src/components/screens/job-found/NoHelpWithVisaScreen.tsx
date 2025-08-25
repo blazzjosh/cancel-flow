@@ -1,5 +1,7 @@
 'use client';
 
+import { CancellationFlowButton } from '@/components/ui';
+
 interface NoHelpWithVisaScreenProps {
     onFinish: () => void;
 }
@@ -8,31 +10,33 @@ export default function NoHelpWithVisaScreen({ onFinish }: NoHelpWithVisaScreenP
     return (
         <div className="flex flex-col w-full p-5">
             {/* Main heading */}
-            <div className="mb-5">
-                <h2 className="text-[40px] font-semibold leading-[48px] tracking-[-1.08px] text-gray-800 font-dm-sans">
-                    All done, your cancellation&apos;s
-                    <br />
-                    been processed.
+            <div className="mb-6">
+                <h2 className="text-[36px] font-semibold leading-[36px] tracking-[-1.08px] text-[#41403D] font-dm-sans mb-4">
+                    Perfect! You&apos;re all set. 🎯
                 </h2>
-            </div>
-
-            {/* Message */}
-            <div className="mb-20">
-                <p className="text-base font-medium leading-[24px] text-gray-700 font-dm-sans">
-                    We&apos;re stoked to hear you&apos;ve landed a job and sorted your visa.
-                    <br />
-                    Big congrats from the team. 🙌
+                <p className="text-base font-medium text-gray-700 font-dm-sans">
+                    It sounds like you have everything you need to move forward with your new role.
                 </p>
             </div>
 
-            {/* Finish button */}
+            {/* Success message */}
+            <div className="mb-8">
+                <p className="text-base font-medium leading-[24px] text-gray-700 font-dm-sans mb-4">
+                    We&apos;re thrilled that MigrateMate could help you on your journey to finding your dream job.
+                </p>
+                <p className="text-base font-medium leading-[24px] text-gray-700 font-dm-sans">
+                    Best of luck with your new role, and remember - you&apos;re always welcome back if you need anything in the future!
+                </p>
+            </div>
+
+            {/* Action button */}
             <div className="mt-auto">
-                <button
+                <CancellationFlowButton
+                    variant="primary"
                     onClick={onFinish}
-                    className="w-full h-[52px] px-6 py-3 rounded-lg bg-purple-600 text-white font-semibold text-base hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-all duration-200 font-dm-sans"
                 >
                     Finish
-                </button>
+                </CancellationFlowButton>
             </div>
         </div>
     );

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { GetDiscountButton, ContinueButton } from '@/components/ui';
 
 interface OfferDeclinedSurveyScreenProps {
     variant: 'A' | 'B';
@@ -37,13 +38,11 @@ export default function OfferDeclinedSurveyScreen({
         }));
     };
 
-
-
     return (
         <div className="flex flex-col w-full p-5">
             {/* Main heading */}
             <div className="mb-6">
-                <h2 className="text-[40px] font-semibold leading-[48px] tracking-[-1.08px] text-gray-800 font-dm-sans mb-4">
+                <h2 className="text-[36px] font-semibold leading-[36px] tracking-[-1.08px] text-[#41403D] font-dm-sans mb-4">
                     Help us understand how you
                     <br />
                     were using Migrate Mate.
@@ -130,24 +129,19 @@ export default function OfferDeclinedSurveyScreen({
             {/* Action buttons */}
             <div className="space-y-4 mt-auto">
                 {/* Get discount button */}
-                <button
+                <GetDiscountButton
                     onClick={onGetDiscount}
-                    className="w-full h-[52px] px-6 py-3 rounded-lg bg-green-600 text-white font-semibold text-base hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all duration-200 font-dm-sans"
-                >
-                    Get 50% off | {discountedPrice} <span className="line-through text-green-200">{originalPrice}</span>
-                </button>
+                    discountedPrice={discountedPrice}
+                    originalPrice={originalPrice}
+                />
 
                 {/* Continue button */}
-                <button
+                <ContinueButton
                     onClick={onNavigateToCancelReason}
                     disabled={!isFormValid}
-                    className={`w-full h-[52px] px-6 py-3 rounded-lg font-semibold text-base transition-all duration-200 font-dm-sans ${isFormValid
-                        ? 'bg-red-600 text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2'
-                        : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                        }`}
                 >
                     Continue
-                </button>
+                </ContinueButton>
             </div>
         </div>
     );

@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { supabase } from '@/lib/supabase';
+import { sanitizeInput, validateUUID } from '@/lib/utils';
 import {
   InitialQuestionScreen,
   CongratsScreen,
@@ -40,17 +41,65 @@ export default function CancellationFlow({ isOpen, onClose, subscriptionId, user
   });
   const [isFormValid, setIsFormValid] = useState(false);
 
-  // Determine downsell variant on first load
+  // Check for existing variant or assign new one
+  const checkAndAssignDownsellVariant = useCallback(async () => {
+    try {
+      // Validate input parameters
+      if (!validateUUID(userId) || !validateUUID(subscriptionId)) {
+        console.error('Invalid UUID format for userId or subscriptionId');
+        setDownsellVariant('A');
+        return;
+      }
+
+      // First, check if user already has a variant assigned
+      const { data: existingCancellation } = await supabase
+        .from('cancellations')
+        .select('downsell_variant')
+        .eq('user_id', userId)
+        .eq('subscription_id', subscriptionId)
+        .single();
+
+      if (existingCancellation?.downsell_variant) {
+        // User already has a variant assigned, use it
+        setDownsellVariant(existingCancellation.downsell_variant);
+      } else {
+        // New user, assign variant based on user ID hash
+        const hash = userId.split('').reduce((a, b) => {
+          a = ((a << 5) - a + b.charCodeAt(0)) & 0xffffffff;
+          return a;
+        }, 0);
+        const newVariant: DownsellVariant = hash % 2 === 0 ? 'A' : 'B';
+        setDownsellVariant(newVariant);
+
+        // Mark subscription as pending_cancellation when user starts the flow
+        await supabase
+          .from('subscriptions')
+          .update({ status: 'pending_cancellation' })
+          .eq('id', subscriptionId)
+          .eq('user_id', userId);
+
+        // Persist the variant assignment immediately
+        await supabase
+          .from('cancellations')
+          .insert({
+            user_id: userId,
+            subscription_id: subscriptionId,
+            downsell_variant: newVariant
+          });
+      }
+    } catch (error) {
+      console.error('Error checking/assigning downsell variant:', error);
+      // Fallback to default variant A if there's an error
+      setDownsellVariant('A');
+    }
+  }, [userId, subscriptionId]);
+
+  // Determine downsell variant on first load or check for existing variant
   useEffect(() => {
     if (isOpen && currentStep === 'initial' && typeof window !== 'undefined') {
-      // Simple A/B testing - assign variant based on user ID hash
-      const hash = userId.split('').reduce((a, b) => {
-        a = ((a << 5) - a + b.charCodeAt(0)) & 0xffffffff;
-        return a;
-      }, 0);
-      setDownsellVariant(hash % 2 === 0 ? 'A' : 'B');
+      checkAndAssignDownsellVariant();
     }
-  }, [isOpen, currentStep, userId]);
+  }, [isOpen, currentStep, userId, subscriptionId, checkAndAssignDownsellVariant]);
 
   // Validate form completion
   useEffect(() => {
@@ -69,9 +118,12 @@ export default function CancellationFlow({ isOpen, onClose, subscriptionId, user
   };
 
   const handleSurveyAnswerChange = (question: keyof SurveyAnswers, value: string) => {
+    // Sanitize input before storing
+    const sanitizedValue = sanitizeInput(value);
+
     setSurveyAnswers(prev => ({
       ...prev,
-      [question]: value
+      [question]: sanitizedValue
     }));
   };
 
@@ -81,11 +133,13 @@ export default function CancellationFlow({ isOpen, onClose, subscriptionId, user
       try {
         await supabase
           .from('cancellations')
-          .insert({
+          .upsert({
             user_id: userId,
             subscription_id: subscriptionId,
             downsell_variant: downsellVariant,
             reason: JSON.stringify(surveyAnswers)
+          }, {
+            onConflict: 'user_id,subscription_id'
           });
 
         // Navigate based on the response
@@ -132,11 +186,14 @@ export default function CancellationFlow({ isOpen, onClose, subscriptionId, user
 
   const handleFeedbackComplete = async (feedback: string) => {
     try {
+      // Sanitize feedback input before storing
+      const sanitizedFeedback = sanitizeInput(feedback);
+
       // Update cancellation record with feedback
       await supabase
         .from('cancellations')
         .update({
-          feedback: feedback
+          feedback: sanitizedFeedback
         })
         .eq('user_id', userId)
         .eq('subscription_id', subscriptionId);
@@ -226,8 +283,31 @@ export default function CancellationFlow({ isOpen, onClose, subscriptionId, user
     }
   };
 
-  const handleNavigateToOfferAccept1 = () => {
-    setCurrentStep('offerAccept1');
+  const handleNavigateToOfferAccept1 = async () => {
+    try {
+      // Update cancellation record to mark downsell as accepted
+      await supabase
+        .from('cancellations')
+        .update({
+          accepted_downsell: true
+        })
+        .eq('user_id', userId)
+        .eq('subscription_id', subscriptionId);
+
+      // Mark subscription as active again since user accepted downsell
+      await supabase
+        .from('subscriptions')
+        .update({ status: 'active' })
+        .eq('id', subscriptionId)
+        .eq('user_id', userId);
+
+      // Navigate to offer accept screen
+      setCurrentStep('offerAccept1');
+    } catch (error) {
+      console.error('Error updating downsell acceptance:', error);
+      // Still navigate even if database update fails
+      setCurrentStep('offerAccept1');
+    }
   };
 
   const handleNavigateToOfferDeclined = () => {
@@ -236,14 +316,30 @@ export default function CancellationFlow({ isOpen, onClose, subscriptionId, user
 
   const handleOfferDeclinedGetDiscount = async () => {
     try {
+      // Update cancellation record to mark downsell as accepted
+      await supabase
+        .from('cancellations')
+        .update({
+          accepted_downsell: true
+        })
+        .eq('user_id', userId)
+        .eq('subscription_id', subscriptionId);
+
+      // Mark subscription as active again since user accepted downsell
+      await supabase
+        .from('subscriptions')
+        .update({ status: 'active' })
+        .eq('id', subscriptionId)
+        .eq('user_id', userId);
+
       // Navigate to offer accept screen
       setCurrentStep('offerAccept1');
     } catch (error) {
-      console.error('Error handling discount request:', error);
+      console.error('Error updating downsell acceptance:', error);
+      // Still navigate even if database update fails
+      setCurrentStep('offerAccept1');
     }
   };
-
-
 
   const handleOfferAccept1Complete = () => {
     handleVisaHelpComplete();
@@ -255,16 +351,27 @@ export default function CancellationFlow({ isOpen, onClose, subscriptionId, user
 
   const handleCancelReasonGetDiscount = async (reason: string, details?: string) => {
     try {
+      // Sanitize inputs before storing
+      const sanitizedReason = sanitizeInput(reason);
+      const sanitizedDetails = details ? sanitizeInput(details) : undefined;
+
       // Update cancellation record with reason and details
       await supabase
         .from('cancellations')
         .update({
-          cancellation_reason: reason,
-          cancellation_details: details,
+          cancellation_reason: sanitizedReason,
+          cancellation_details: sanitizedDetails,
           accepted_downsell: true
         })
         .eq('user_id', userId)
         .eq('subscription_id', subscriptionId);
+
+      // Mark subscription as active again since user accepted downsell
+      await supabase
+        .from('subscriptions')
+        .update({ status: 'active' })
+        .eq('id', subscriptionId)
+        .eq('user_id', userId);
 
       // Navigate to offer accept screen
       setCurrentStep('offerAccept1');
@@ -275,16 +382,27 @@ export default function CancellationFlow({ isOpen, onClose, subscriptionId, user
 
   const handleCancelReasonComplete = async (reason: string, details?: string) => {
     try {
+      // Sanitize inputs before storing
+      const sanitizedReason = sanitizeInput(reason);
+      const sanitizedDetails = details ? sanitizeInput(details) : undefined;
+
       // Update cancellation record with reason and details
       await supabase
         .from('cancellations')
         .update({
-          cancellation_reason: reason,
-          cancellation_details: details,
+          cancellation_reason: sanitizedReason,
+          cancellation_details: sanitizedDetails,
           completed: true
         })
         .eq('user_id', userId)
         .eq('subscription_id', subscriptionId);
+
+      // Mark subscription as cancelled
+      await supabase
+        .from('subscriptions')
+        .update({ status: 'cancelled' })
+        .eq('id', subscriptionId)
+        .eq('user_id', userId);
 
       // Navigate to cancelComplete screen
       setCurrentStep('cancelComplete');
@@ -301,9 +419,9 @@ export default function CancellationFlow({ isOpen, onClose, subscriptionId, user
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-gray-500/50 backdrop-blur-sm flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-gray-500/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <main
-        className="bg-white rounded-[20px] w-full max-w-[1000px] mx-4 overflow-hidden shadow-xl"
+        className="bg-white rounded-[20px] w-full max-w-[1000px] max-h-[90vh] overflow-y-auto shadow-xl"
         role="dialog"
         aria-labelledby="modal-title"
         aria-describedby="modal-description"
@@ -322,26 +440,44 @@ export default function CancellationFlow({ isOpen, onClose, subscriptionId, user
             </button>
           )}
 
-          <h1
-            id="modal-title"
-            className="text-base font-semibold text-gray-800 font-dm-sans"
-          >
-            Subscription Cancellation
-          </h1>
+          <div className="flex items-center justify-center gap-[24px] ">
+            <h1
+              id="modal-title"
+              className="text-base  text-gray-800 font-dm-sans"
+            >
+              Subscription Cancellation
+            </h1>
 
-          {/* Progress indicator */}
-          {currentStep !== 'initial' && (
-            <div className="absolute right-16 flex items-center space-x-2">
-              <div className="flex space-x-1">
-                <div className={`w-2 h-2 rounded-full ${currentStep === 'congrats' ? 'bg-gray-400' : 'bg-gray-300'}`}></div>
-                <div className={`w-2 h-2 rounded-full ${currentStep === 'yesWithMM' || currentStep === 'downsell' || currentStep === 'feedback' ? 'bg-gray-400' : 'bg-gray-300'}`}></div>
-                <div className={`w-2 h-2 rounded-full ${currentStep === 'noHelpWithVisa' || currentStep === 'noWithoutMM' || currentStep === 'visaHelp' || currentStep === 'offerAccept1' || currentStep === 'offerDeclined' || currentStep === 'cancelReason' || currentStep === 'cancelComplete' ? 'bg-gray-400' : 'bg-gray-300'}`}></div>
+            {/* Progress indicator - pill style */}
+            {currentStep !== 'initial' && (
+              <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-1">
+                  <div className={`w-6 h-3 rounded-full transition-colors ${currentStep === 'congrats'
+                    ? 'bg-gray-400'
+                    : 'bg-gray-300'
+                    }`}>
+                  </div>
+                  <div className={`w-6 h-3 rounded-full transition-colors ${currentStep === 'yesWithMM' || currentStep === 'downsell' || currentStep === 'feedback'
+                    ? 'bg-gray-400'
+                    : 'bg-gray-300'
+                    }`}>
+                  </div>
+                  <div className={`w-6 h-3 rounded-full transition-colors ${currentStep === 'noHelpWithVisa' || currentStep === 'noWithoutMM' || currentStep === 'visaHelp' || currentStep === 'offerAccept1' || currentStep === 'offerDeclined' || currentStep === 'cancelReason'
+                    ? 'bg-gray-400'
+                    : 'bg-gray-300'
+                    }`}>
+                  </div>
+                  {currentStep === 'cancelComplete' && (
+                    <div className="w-6 h-3 rounded-full bg-gray-400">
+                    </div>
+                  )}
+                </div>
+                <span className="text-sm text-gray-500 font-dm-sans">
+                  Step {currentStep === 'congrats' ? '1' : currentStep === 'yesWithMM' || currentStep === 'downsell' || currentStep === 'feedback' ? '2' : currentStep === 'noHelpWithVisa' || currentStep === 'noWithoutMM' || currentStep === 'visaHelp' || currentStep === 'offerAccept1' || currentStep === 'offerDeclined' || currentStep === 'cancelReason' ? '3' : currentStep === 'cancelComplete' ? '4' : '3'} of {currentStep === 'cancelComplete' ? '4' : '3'}
+                </span>
               </div>
-              <span className="text-sm text-gray-500 font-dm-sans">
-                Step {currentStep === 'congrats' ? '1' : currentStep === 'yesWithMM' || currentStep === 'downsell' || currentStep === 'feedback' ? '2' : currentStep === 'noHelpWithVisa' || currentStep === 'noWithoutMM' || currentStep === 'visaHelp' || currentStep === 'offerAccept1' || currentStep === 'offerDeclined' || currentStep === 'cancelReason' ? '3' : currentStep === 'cancelComplete' ? '4' : '3'} of {currentStep === 'cancelComplete' ? '4' : '3'}
-              </span>
-            </div>
-          )}
+            )}
+          </div>
 
           <button
             onClick={onClose}
@@ -354,8 +490,19 @@ export default function CancellationFlow({ isOpen, onClose, subscriptionId, user
           </button>
         </header>
 
-        <div className="flex items-center justify-center gap-5 p-5 relative">
-          {/* Left Content */}
+
+        <div className="flex flex-col md:flex-row gap-5 p-5 relative">
+          {/* Mobile Image - shows on top for mobile */}
+          <div className="block md:hidden relative w-full h-[200px] rounded-lg overflow-hidden mb-4">
+            <Image
+              className="object-cover"
+              alt="City skyline illustration"
+              src="/bg.jpg"
+              fill
+            />
+          </div>
+
+          {/* Content */}
           <div className="flex flex-col items-start gap-5 flex-1">
             {currentStep === 'initial' && (
               <InitialQuestionScreen onJobFoundAnswer={handleJobFoundAnswer} />
@@ -437,8 +584,8 @@ export default function CancellationFlow({ isOpen, onClose, subscriptionId, user
             )}
           </div>
 
-          {/* Right Image */}
-          <div className="relative w-[450px] h-[400px] rounded-lg overflow-hidden">
+          {/* Desktop Image - shows on right on desktop */}
+          <div className="hidden md:block relative w-[450px] h-[400px] rounded-lg overflow-hidden">
             <Image
               className="object-cover"
               alt="City skyline illustration"

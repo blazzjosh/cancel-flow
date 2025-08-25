@@ -176,11 +176,6 @@ npm run build         # Verify build process
 - **Railway**: Full-stack deployment
 - **Self-hosted**: Docker or traditional hosting
 
-## 🆘 Support
-
-- **Issues**: Create a GitHub issue
-- **Documentation**: Check the code comments and types
-- **Community**: Reach out to the development team
 
 ---
 

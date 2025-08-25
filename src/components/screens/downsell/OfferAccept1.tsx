@@ -48,6 +48,8 @@ export default function OfferAccept1Screen({
                 </p>
             </div>
 
+            <div className="h-px bg-[#E6E6E6] w-full mb-5"></div>
+
             {/* Call to action button */}
             <div className="mt-auto">
                 <CancellationFlowButton

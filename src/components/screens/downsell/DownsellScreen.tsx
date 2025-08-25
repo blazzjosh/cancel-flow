@@ -24,7 +24,7 @@ export default function DownsellScreen({
                     We built this to help you land the job, this makes it a little easier.
                 </h2>
                 <p className="text-[24px] font-semibold text-[#62605c] font-dm-sans mt-5">
-                    We've been there and we're here to help you.
+                    We&apos;ve been there and we&apos;re here to help you.
                 </p>
             </div>
 
@@ -32,7 +32,7 @@ export default function DownsellScreen({
             <div className="mb-5">
                 <div className="bg-[#EBE1FE] p-3 rounded-xl border border-[#9A6FFF] text-center">
                     <h3 className="text-[26px] font-semibold text-[#41403D] font-dm-sans mb-2">
-                        Here's <span className="underline">50% off</span> until you find a job.
+                        Here&apos;s <span className="underline">50% off</span> until you find a job.
                     </h3>
                     <div className="flex items-end justify-center gap-2.5 mb-4">
                         <span className="text-[24px] font-semibold text-[#9a6fff] font-dm-sans">
@@ -54,7 +54,7 @@ export default function DownsellScreen({
                     </div>
 
                     <p className="text-xs italic text-[#62605c] font-dm-sans">
-                        You won't be charged until your next billing date.
+                        You won&apos;t be charged until your next billing date.
                     </p>
                 </div>
             </div>

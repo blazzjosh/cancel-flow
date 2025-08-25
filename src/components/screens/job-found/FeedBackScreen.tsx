@@ -23,7 +23,7 @@ export default function FeedbackScreen({ onContinue }: FeedbackScreenProps) {
             {/* Main heading */}
             <div className="mb-6">
                 <h2 className="text-[36px] font-semibold leading-[36px] tracking-[-1.08px] text-[#41403D] font-dm-sans mb-4">
-                    What’s one thing you wish we could’ve helped you with?
+                    What&apos;s one thing you wish we could&apos;ve helped you with?
                 </h2>
 
             </div>
@@ -31,8 +31,7 @@ export default function FeedbackScreen({ onContinue }: FeedbackScreenProps) {
             {/* Feedback input */}
             <div className="mb-8">
                 <p className="text-base  text-gray-700 font-dm-sans mb-4">
-                    We're always looking to improve, your thoughts can help us make Migrate Mate more useful for others.*
-
+                    We&apos;re always looking to improve, your thoughts can help us make Migrate Mate more useful for others.*
                 </p>
                 <div className="relative">
                     <textarea

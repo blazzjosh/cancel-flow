@@ -126,6 +126,8 @@ export default function OfferDeclinedSurveyScreen({
                 </div>
             </div>
 
+            <div className="h-px bg-[#E6E6E6] w-full mb-5"></div>
+
             {/* Action buttons */}
             <div className="space-y-4 mt-auto">
                 {/* Get discount button */}
@@ -139,6 +141,7 @@ export default function OfferDeclinedSurveyScreen({
                 <ContinueButton
                     onClick={onNavigateToCancelReason}
                     disabled={!isFormValid}
+                    className='bg-red-500 hover:bg-red-600'
                 >
                     Continue
                 </ContinueButton>

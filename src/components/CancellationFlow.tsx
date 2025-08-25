@@ -98,13 +98,13 @@ const FLOW_STEPS = {
   feedback: new FlowStepConfig('feedback', 2, 3),
   yesWithMM: new FlowStepConfig('yesWithMM', 3, 3),
   noWithoutMM: new FlowStepConfig('noWithoutMM', 3, 3),
-  noHelpWithVisa: new FlowStepConfig('noHelpWithVisa', 3, 3, true, '600px'),
-  visaHelp: new FlowStepConfig('visaHelp', 3, 3, true, '600px'),
+  noHelpWithVisa: new FlowStepConfig('noHelpWithVisa', 3, 3, true, '600px',false, true, "Subscription Cancelled"),
+  visaHelp: new FlowStepConfig('visaHelp', 3, 3, true, '600px', false, true, "Subscription Cancelled"),
   downsell: new FlowStepConfig('downsell', 1, 3),
   offerAccept1: new FlowStepConfig('offerAccept1', 2, 3, false, '400px', true, true, 'Subscription'),
   offerDeclined: new FlowStepConfig('offerDeclined', 2, 3),
   cancelReason: new FlowStepConfig('cancelReason', 3, 3),
-  cancelComplete: new FlowStepConfig('cancelComplete', 4, 4, true, '600px')
+  cancelComplete: new FlowStepConfig('cancelComplete', 4, 3, true, '600px')
 };
 
 interface CancellationFlowProps {
@@ -563,10 +563,7 @@ export default function CancellationFlow({ isOpen, onClose, subscriptionId, user
                       : 'bg-gray-300'
                     }`}>
                   </div>
-                  {currentStep === 'cancelComplete' && (
-                    <div className="w-6 h-3 rounded-full bg-gray-400">
-                    </div>
-                  )}
+
                 </div>
                 <span className="text-sm text-gray-500 font-dm-sans">
                   {FLOW_STEPS[currentStep as keyof typeof FLOW_STEPS]?.getProgressState().stepText || 'Step 1 of 3'}
@@ -577,7 +574,7 @@ export default function CancellationFlow({ isOpen, onClose, subscriptionId, user
 
           <button
             onClick={onClose}
-            className="absolute right-4 w-6 h-6 cursor-pointer hover:opacity-70 transition-opacity"
+            className="absolute right-4 w-6 h-6 cursor-pointer hover:opacity-70 transition-opacity text-gray-600 hover:text-gray-800"
             aria-label="Close modal"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

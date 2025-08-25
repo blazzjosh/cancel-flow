@@ -12,7 +12,7 @@ export default function VisaHelp({ onFinish }: VisaHelpProps) {
             {/* Main heading */}
             <div className="mb-4">
                 <h2 className="text-[32px] font-semibold leading-[36px] tracking-[-1.08px] text-[#41403D] font-dm-sans">
-                    Your cancellation's all sorted, mate, no more charges.
+                    Your cancellation&apos;s all sorted, mate, no more charges.
                 </h2>
             </div>
 
@@ -33,9 +33,9 @@ export default function VisaHelp({ onFinish }: VisaHelpProps) {
                                 <span className="text-sm text-gray-500 font-dm-sans">&lt;mihailo@migratemate.co&gt;</span>
                             </div>
                             <div className="space-y-3 text-sm text-gray-700 font-dm-sans">
-                                <p className='font-bold'>I'll be reaching out soon to help with the visa side of things.</p>
-                                <p className='mb-2'>We've got your back, whether it's questions, paperwork, or just figuring out your options.</p>
-                                <p className='mb-2 font-bold'>Keep an eye on your inbox, I'll be in touch shortly.</p>
+                                <p className='font-bold'>I&apos;ll be reaching out soon to help with the visa side of things.</p>
+                                <p className='mb-2'>We&apos;ve got your back, whether it&apos;s questions, paperwork, or just figuring out your options.</p>
+                                <p className='mb-2 font-bold'>Keep an eye on your inbox, I&apos;ll be in touch shortly.</p>
                             </div>
                         </div>
                     </div>

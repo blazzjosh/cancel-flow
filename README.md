@@ -1,129 +1,187 @@
-# Migrate Mate - Subscription Cancellation Flow Challenge
+# Migrate Mate - Subscription Cancellation Flow
 
-## Overview
+A modern, user-friendly subscription cancellation Flow for  MigratetMate built with Next.js 15, React 19, and Supabase. This implementation provides an intuitive multi-step flow for handling subscription cancellations with smart downsell strategies and comprehensive user feedback collection.
 
-Convert an existing Figma design into a fully-functional subscription-cancellation flow for Migrate Mate. This challenge tests your ability to implement pixel-perfect UI, handle complex business logic, and maintain security best practices.
+## 🚀 Features
 
-## Objective
+### **Core Functionality**
+- **Multi-Step Cancellation Flow**: Guided 3-step process with progress indicators
+- **Smart Downsell System**: A/B testing for retention offers with 50% discount
+- **Context-Aware Navigation**: Intelligent back button logic based on user journey
+- **Progress Tracking**: Visual progress indicators with completion states
+- **Responsive Design**: Mobile-first design with desktop optimizations
 
-Implement the Figma-designed cancellation journey exactly on mobile + desktop, persist outcomes securely, and instrument the A/B downsell logic.
+### **User Experience**
+- **Personalized Flows**: Different paths based on user responses
+- **Survey Collection**: Comprehensive feedback gathering for service improvement
+- **Visa Assistance**: Specialized support for visa-related cancellations
+- **Job Success Tracking**: Integration with job search outcomes
+- **Smooth Transitions**: Seamless screen-to-screen navigation
 
-## What's Provided
+### **Technical Features**
+- **TypeScript**: Full type safety and IntelliSense support
+- **Tailwind CSS**: Modern, utility-first styling
+- **Supabase Integration**: Real-time database with authentication
+- **ESLint**: Code quality and consistency
+- **Next.js 15**: Latest React framework with App Router
 
-This repository contains:
-- ✅ Next.js + TypeScript + Tailwind scaffold
-- ✅ `seed.sql` with users table (25/29 USD plans) and empty cancellations table
-- ✅ Local Supabase configuration for development
-- ✅ Basic Supabase client setup in `src/lib/supabase.ts`
+## 🏗️ Architecture
 
-## Tech Stack (Preferred)
+### **Component Structure**
+```
+src/
+├── components/
+│   ├── CancellationFlow.tsx     # Main flow controller
+│   ├── screens/                 # Individual screen components
+│   │   ├── job-found/          # Job-related screens
+│   │   └── downsell/           # Downsell flow screens
+│   └── ui/                     # Reusable UI components
+├── lib/
+│   ├── supabase.ts             # Database configuration
+│   └── utils.ts                # Utility functions
+└── app/                        # Next.js app router
+```
 
-- **Next.js** with App Router
-- **React** with TypeScript
-- **Tailwind CSS** for styling
-- **Supabase** (Postgres + Row-Level Security)
+### **Flow Steps**
+1. **Initial Question**: Job search status assessment
+2. **Survey Collection**: User feedback and experience data
+3. **Path Resolution**: Job success, visa help, or downsell options
+4. **Downsell Flow**: Retention offers with A/B testing
+5. **Completion**: Final confirmation and next steps
 
-> **Alternative stacks allowed** if your solution:
-> 1. Runs with `npm install && npm run dev`
-> 2. Persists to a Postgres-compatible database
-> 3. Enforces table-level security
+## 🛠️ Tech Stack
 
-## Must-Have Features
+- **Frontend**: Next.js 15, React 19, TypeScript
+- **Styling**: Tailwind CSS 4, PostCSS
+- **Database**: Supabase (PostgreSQL)
+- **Authentication**: Supabase Auth
+- **Development**: ESLint, Turbopack
+- **Deployment**: Vercel-ready
 
-### 1. Progressive Flow (Figma Design)
-- Implement the exact cancellation journey from provided Figma
-- Ensure pixel-perfect fidelity on both mobile and desktop
-- Handle all user interactions and state transitions
+## 📋 Prerequisites
 
-### 2. Deterministic A/B Testing (50/50 Split)
-- **On first entry**: Assign variant via cryptographically secure RNG
-- **Persist** variant to `cancellations.downsell_variant` field
-- **Reuse** variant on repeat visits (never re-randomize)
+- Node.js 18+ 
+- npm or yarn
+- Supabase CLI (for local development)
+- Git
 
-**Variant A**: No downsell screen
-**Variant B**: Show "$10 off" offer
-- Price $25 → $15, Price $29 → $19
-- **Accept** → Log action, take user back to profile page (NO ACTUAL PAYMENT PROCESSING REQUIRED)
-- **Decline** → Continue to reason selection in flow
+## 🚀 Getting Started
 
-### 3. Data Persistence
-- Mark subscription as `pending_cancellation` in database
-- Create cancellation record with:
-  - `user_id`
-  - `downsell_variant` (A or B)
-  - `reason` (from user selection)
-  - `accepted_downsell` (boolean)
-  - `created_at` (timestamp)
+### **1. Clone the Repository**
+```bash
+git clone <your-repo-url>
+cd cancel-flow-task-main
+```
 
-### 4. Security Requirements
-- **Row-Level Security (RLS)** policies
-- **Input validation** on all user inputs
-- **CSRF/XSS protection**
-- Secure handling of sensitive data
+### **2. Install Dependencies**
+```bash
+npm install
+```
 
-### 5. Reproducible Setup
-- `npm run db:setup` creates schema and seed data (local development)
-- Clear documentation for environment setup
+### **3. Environment Setup**
+Create a `.env.local` file in the root directory:
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
 
-## Out of Scope
+### **4. Database Setup**
+```bash
+# Start Supabase locally
+npm run db:setup
 
-- **Payment processing** - Stub with comments only
-- **User authentication** - Use mock user data
-- **Email notifications** - Not required
-- **Analytics tracking** - Focus on core functionality
+# Reset database (if needed)
+npm run db:reset
+```
 
-## Getting Started
+### **5. Start Development Server**
+```bash
+npm run dev
+```
 
-1. **Clone this repository** `git clone [repo]`
-2. **Install dependencies**: `npm install`
-3. **Set up local database**: `npm run db:setup`
-4. **Start development**: `npm run dev`
+Open [http://localhost:3000](http://localhost:3000) to view the application.
 
-## Database Schema
+## 📱 Available Scripts
 
-The `seed.sql` file provides a **starting point** with:
-- `users` table with sample users
-- `subscriptions` table with $25 and $29 plans
-- `cancellations` table (minimal structure - **you'll need to expand this**)
-- Basic RLS policies (enhance as needed)
+- `npm run dev` - Start development server with Turbopack
+- `npm run build` - Build for production
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint
+- `npm run db:setup` - Initialize local database
+- `npm run db:reset` - Reset local database
 
-### Important: Schema Design Required
+## 🔧 Configuration
 
-The current `cancellations` table is intentionally minimal. You'll need to:
-- **Analyze the cancellation flow requirements** from the Figma design
-- **Design appropriate table structure(s)** to capture all necessary data
-- **Consider data validation, constraints, and relationships**
-- **Ensure the schema supports the A/B testing requirements**
+### **Flow Steps Configuration**
+The application uses a `FlowStepConfig` class to manage step behavior:
 
-## Evaluation Criteria
+```typescript
+new FlowStepConfig(
+  name: string,           // Step identifier
+  stepNumber: number,     // Current step (1-4)
+  totalSteps: number,     // Total steps in flow
+  isCompletion: boolean,  // Is this a completion step?
+  imageHeight: string,    // Background image height
+  hideProgress: boolean,  // Hide progress indicator?
+  hideBackButton: boolean, // Hide back button?
+  headerText: string      // Custom header text
+)
+```
 
-- **Functionality (40%)**: Feature completeness and correctness
-- **Code Quality (25%)**: Clean, maintainable, well-structured code
-- **Pixel/UX Fidelity (15%)**: Accuracy to Figma design
-- **Security (10%)**: Proper RLS, validation, and protection
-- **Documentation (10%)**: Clear README and code comments
+### **Downsell Variants**
+- **Variant A**: $19.50/month (50% off $39)
+- **Variant B**: $12.50/month (50% off $25)
 
-## Deliverables
+## 🎨 Customization
 
-1. **Working implementation** in this repository
-2. **NEW One-page README.md (replace this)** (≤600 words) explaining:
-   - Architecture decisions
-   - Security implementation
-   - A/B testing approach
-3. **Clean commit history** with meaningful messages
+### **Styling**
+- Modify `tailwind.config.ts` for theme changes
+- Update component classes for visual adjustments
+- Customize colors in `globals.css`
 
-## Timeline
+### **Flow Logic**
+- Add new steps in `FLOW_STEPS` configuration
+- Create new screen components in `screens/` directory
+- Update navigation logic in `CancellationFlow.tsx`
 
-Submit your solution within **72 hours** of receiving this repository.
+### **Database Schema**
+- Modify `seed.sql` for data structure changes
+- Update Supabase types and queries
+- Add new tables as needed
 
-## AI Tooling
+## 🧪 Testing
 
-Using Cursor, ChatGPT, Copilot, etc. is **encouraged**. Use whatever accelerates your development—just ensure you understand the code and it runs correctly.
+### **Manual Testing**
+1. Navigate through all flow steps
+2. Test back button functionality
+3. Verify downsell variants
+4. Check responsive design
+5. Test form validation
 
-## Questions?
+### **Code Quality**
+```bash
+npm run lint          # Check code quality
+npm run build         # Verify build process
+```
 
-Review the challenge requirements carefully. If you have questions about specific implementation details, make reasonable assumptions and document them in your README.
+## 🚀 Deployment
+
+### **Vercel (Recommended)**
+1. Connect your GitHub repository
+2. Set environment variables
+3. Deploy automatically on push
+
+### **Other Platforms**
+- **Netlify**: Compatible with Next.js
+- **Railway**: Full-stack deployment
+- **Self-hosted**: Docker or traditional hosting
+
+## 🆘 Support
+
+- **Issues**: Create a GitHub issue
+- **Documentation**: Check the code comments and types
+- **Community**: Reach out to the development team
 
 ---
 
-**Good luck!** We're excited to see your implementation.
+**Built with ❤️ using Next.js, React, and Supabase**
